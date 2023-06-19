@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+
+# PASTAS DE TESTES
+/inputs
+/outputs
+
+# ARQUIVO GERADO NO CODESPACES
+main
