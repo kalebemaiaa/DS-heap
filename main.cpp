@@ -1,10 +1,7 @@
 #include "auxiliar_functions.hpp"
 
-/* QUANDO TRABALHAR COM VARIAS ARVORES
-Node **ptrAllTree = nullptr;
+Node **ptrAllTree;
 int iTreeCount = 0;
-*/
-
 
 /*
     ITEM 1
@@ -38,6 +35,7 @@ void drawMenu(int iMenuAtual) {
 }
 
 int main() {
+    /*
     int controle = 1;
     while(controle){
         drawMenu(controle);
@@ -46,5 +44,52 @@ int main() {
             controle = 1;
         system("cls || clear");
     };
+    */   
+    
+    while(1){
+        int controle;   
+        cout << "Menu" << endl;
+        cout << "Inserir via arquivo: DIGITE 1" << endl;
+        cout << "Inserir via terminal: DIGITE 2" << endl;
+        cout << "Voltar no menu anterior: DIGITE 3" << endl;
+        cout << "Para sair do programa: DIGITE 0" << endl;
+        cin >> controle;
+        system("cls || clear");
+        switch(controle){
+            case(1):
+                break;
+            case(2):
+                Node *ptrNewRoot = nullptr;
+                int iGetInput;
+                while(true){
+                    cout << "Digite um numero para inserir na arvore:  ";
+                    cin >> iGetInput;
+                    cout << endl;
+                    insertNode(&ptrNewRoot, iGetInput);
+                    printTree(ptrNewRoot, 0, ' ');
+
+                    char controle;
+                    do{
+                        cout << "Deseja inserir outro número?(Y/N)  ";
+                        cin >> controle;
+                        system("clear || cls");
+                    }while(controle != 'N' && controle != 'Y');
+                    if(controle == 'N') break;
+                }
+
+                ptrAllTree =(Node **) realloc(ptrAllTree, ++iTreeCount);
+                *(ptrAllTree + iTreeCount - 1) = ptrNewRoot;
+                break;
+            default:
+            break;
+        }
+        system("clear || cls");
+        if(!controle) break;
+    }
+
+    for(int i = 0; i < iTreeCount; i++) {
+        cout << "\t -Arvore \n" << i + 1 << "-" << endl;
+        printTree(ptrAllTree[i], 0 , ' ');
+    }
     return 0;
 }

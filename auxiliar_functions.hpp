@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 
-#define NULLVAL -2147483647
+#define NULLVAL -666
 
 using namespace std;
 
@@ -44,7 +44,7 @@ void printGalho(int iTotalTabs, char cDirection) {
         cout << "\t";
     if(iTotalTabs == 0) return;
     if(cDirection == '/')
-        cout << cDirection << "‾‾‾  ";
+        cout << cDirection << "---  ";
     else
         cout << cDirection << "___  ";
 }
