@@ -60,19 +60,40 @@ void insertNode(Node **ptrRoot, int iValue) {
     else insertNode(&((*ptrRoot) -> ptrRight), iValue);
 }
 
+/**
+ * Função auxiliar para pegar input com cin.
+ * 
+ * @return numero inteiro digitado pelo usuario.
+ */
 int get_int(){
     int iGetInput;
     cin >> iGetInput;
     while (cin.fail())
     {
-
         cout << "Error: numero invalido. -> DIGITE:  ";
         cin.clear(); 
         cin.ignore(1000, '\n');
         cin >> iGetInput;
+        system("cls || clear");
     }
 
     return iGetInput;
+}
+
+
+/**
+ * Função auxiliar para verificar extensao do arquivo passado.
+ * 
+ * @param cFileName vetor de caracteres que indica qual o nome do arquivo passado.
+ * @return booleano que indca se e .txt ou nao
+ */
+bool verifyExtensao(const char *cFileName) {
+    int i = 0;
+    while(cFileName[i] != '\0'){
+        i++;
+    } 
+
+    return (cFileName[i - 1] != 't' || cFileName[i - 1] != 't' || cFileName[i - 1] != 't') ? false : true;
 }
 
 /**
@@ -201,7 +222,7 @@ static int writeAuxiliar(Node *ptrRoot, FILE *out) {
 int writeFile(Node *root, const char *sFileName, int iFormat2Write){
     FILE *out = fopen(sFileName, "w");
     if(!out){
-        cout << "Error: não foi possível abrir o arquivo: [" << sFileName << "] para escrever tree.\n";
+        cout << "\e[1;41mError: nao foi possivel abrir o arquivo: [" << sFileName << "] para escrever tree.\e[0m\n";
         return -1; 
     }
     int iQtdWrited = -2;
@@ -232,7 +253,7 @@ Node *readingComplete(Node *root, FILE *inp) {
 Node *openFile(const char *sFileName, int iFormat2Read) {
     FILE *inp = fopen(sFileName, "r");
     if(!inp){
-        cout << "Error: não foi possível abrir o arquivo: [" << sFileName << "] para ler tree.\n";
+        cout << "\e[1;41mError: nao foi possivel abrir o arquivo: [" << sFileName << "] para ler tree.\e[0m\n\n";
         return nullptr;
     }
     Node *root = nullptr;
@@ -251,7 +272,7 @@ Node *openFile(const char *sFileName, int iFormat2Read) {
         default:
             break;
     }
-    cout << "\nArvore carregada, raiz em :" << root << endl << endl;
+    cout << "\n\e[1;42mArvore carregada, raiz em :" << root << "  \e[0m" << endl << endl;
     fclose(inp);
     return root;
 }
@@ -530,6 +551,10 @@ int drawMenuInsert() {
             string sFileName;
             cout << "Digite o nome do arquivo: ";
             cin >> sFileName;
+            if(!verifyExtensao(sFileName.c_str())){
+                cout << "\e[1;41mError: O arquivo [" << sFileName << "] nao possui a estensao [.txt].\e[0m\n\n";
+                continue;
+            }
             system("cls || clear");
             int iReadModo = 2;
             while(iReadModo != 1 && iReadModo != 0){
@@ -560,9 +585,8 @@ int drawMenuInsert() {
                 char controle;
                 do{
                     cout << "Deseja inserir outro numero?(Y/N)  ";
-                    controle = get_int();
-                    cout << controle;
-                    system("clear || cls");
+                    cin >> controle;
+                    system("cls || clear");
                 }while(controle != 'N' && controle != 'n' && controle != 'Y' && controle != 'y');
 
                 if(controle == 'N' || controle == 'n') break;
@@ -570,6 +594,7 @@ int drawMenuInsert() {
 
             ptrAllTree = (Node **) realloc(ptrAllTree, ++iTreeCount);
             *(ptrAllTree + iTreeCount - 1) = ptrNewRoot;
+            cout << "\n\e[1;42mArvore carregada, raiz em :" << ptrNewRoot << "  \e[0m" << endl << endl;
         }
         if(controle == 3) break;
         if(controle == 0) return 0;
@@ -601,14 +626,14 @@ int chooseTree(){
  * @return inteiro usado para controle entre menu principal e sair do programa
  */
 int drawMenuShow() {
-    system("clear || cls");
+    system("cls || clear");
     if(iTreeCount == 0) {
         cout << "\n\e[1;41mTemos atualmente -> " << iTreeCount << " <- arvores carregadas. ";
         cout << "Por favor, volte ao menu anterior e insira alguma arvore.\e[0m\n" << endl;
         return 1;
     }
 
-    system("clear || cls");
+    system("cls || clear");
     cout << endl << endl;
     for(int i = 0; i < iTreeCount; i++) {
         cout << "\n\t \e[1;43mArvore " << i + 1 << "\e[0m" << endl;
@@ -623,7 +648,7 @@ int drawMenuShow() {
         cout << "\t\t \e[1;45m- ARVORE " << iChooseTree << " - \e[0m\n" << endl;
         cout << "- Ver altura da arvore: \t\tDIGITE 1" << endl;
         cout << "- Ver tamanho da arvore: \t\tDIGITE 2" << endl;
-        cout << "- Buscar endereço de um elemento: \tDIGITE 3" << endl;
+        cout << "- Buscar endereco de um elemento: \tDIGITE 3" << endl;
         cout << "- Ver se a arvore e completa: \t\tDIGITE 4" << endl;
         cout << "- Ver se a arvore e perfeita: \t\tDIGITE 5" << endl;
         cout << "- Exibir arvore: \t\t\tDIGITE 6" << endl;
@@ -695,7 +720,7 @@ int drawMenuShow() {
  * @return inteiro usado para controle entre menu principal e sair do programa
  */
 int drawMenuChange() {
-    system("clear || cls");
+    system("cls || clear");
     
     if(iTreeCount == 0) {
         cout << "\n\e[1;41mTemos atualmente -> " << iTreeCount << " <- arvores carregadas. ";
@@ -703,7 +728,7 @@ int drawMenuChange() {
         return 1;
     }
 
-    system("clear || cls");
+    system("cls || clear");
     cout << endl << endl;
     for(int i = 0; i < iTreeCount; i++) {
         cout << "\n\t \e[1;43mArvore " << i + 1 << "\e[0m" << endl;
@@ -739,7 +764,7 @@ int drawMenuChange() {
                     cout << "Deseja inserir outro numero?(Y/N)  ";
                     cin >> controle;
                     cout << controle;
-                    system("clear || cls");
+                    system("cls || clear");
                 }while(controle != 'N' && controle != 'Y');
                 if(controle == 'N') break;
             }
@@ -751,6 +776,10 @@ int drawMenuChange() {
             string sFileName;
             cout << "Digite o nome do arquivo: ";
             cin >> sFileName;
+            if(!verifyExtensao(sFileName.c_str())){
+                cout << "\e[1;41mError: O arquivo [" << sFileName << "] nao possui a estensao [.txt].\e[0m\n\n";
+                continue;
+            }
             system("cls || clear");
             int iWriteModo;
             do{
@@ -779,7 +808,7 @@ int drawMenuChange() {
  * @return inteiro usado para controle entre menu principal e sair do programa
  */
 int drawMenuVisualization() {
-    system("clear || cls");
+    system("cls || clear");
     
     if(iTreeCount == 0) {
         cout << "\n\e[1;41mTemos atualmente -> " << iTreeCount << " <- arvores carregadas. ";
@@ -787,7 +816,7 @@ int drawMenuVisualization() {
         return 1;
     }
 
-    system("clear || cls");
+    system("cls || clear");
     cout << endl << endl;
     for(int i = 0; i < iTreeCount; i++) {
         cout << "\n\t \e[1;43mArvore " << i + 1 << "\e[0m" << endl;
@@ -814,10 +843,10 @@ int drawMenuVisualization() {
             printTreeHorizontal(ptrAllTree[iChooseTree - 1], 0, 0);
             int iGetInput;
             do{
-                cout << " - Voltar no menu anterior: DIGITE 1" << endl;
-                cout << " - Sair do programa: \tDIGITE 0" << endl;
+                cout << " - Voltar no menu anterior: \tDIGITE 1" << endl;
+                cout << " - Sair do programa: \t\tDIGITE 0" << endl;
                 iGetInput = get_int();
-                system("clear || cls");
+                system("cls || clear");
             }while(iGetInput > 1 || iGetInput < 0);
             if(iGetInput == 0) return 0;
         }
@@ -827,10 +856,10 @@ int drawMenuVisualization() {
             int iGetInput;
             do{
                 cout << " - Voltar no menu anterior: \tDIGITE 1" << endl;
-                cout << " - Sair do programa: \tDIGITE 0" << endl;
+                cout << " - Sair do programa: \t\tDIGITE 0" << endl;
                 cout << "DIGITE:  ";
                 iGetInput = get_int();
-                system("clear || cls");
+                system("cls || clear");
             }while(iGetInput > 1 || iGetInput < 0);
             if(iGetInput == 0) return 0;
         }
