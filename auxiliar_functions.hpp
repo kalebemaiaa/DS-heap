@@ -237,6 +237,7 @@ Node *openFile(const char *sFileName, int iFormat2Read) {
             break;
     }
     cout << "\nArvore carregada, raiz em :" << root << endl << endl;
+    fclose(inp);
     return root;
 }
 
