@@ -263,6 +263,191 @@ void convertToLL(Node* root, Node** head, Node** tail) {
     convertToLL(root->ptrRight, head, tail);
 }
 
+// FUNÇÕES INCREMENTADAS PARA ORDENAÇÃO DE LISTA ENCADEADA DUPLA:
+Node *troca(Node *inicio, Node *item1, Node *item2){
+    Node *aux;
+    // inicio = item2;
+    if(item1->prev == nullptr) inicio = item2;
+    if(item2->prev == nullptr) inicio = item1;
+    if(item2->prev == item1){
+        if(item1->prev != nullptr) item1->prev->next = item2;
+        if(item2->next != nullptr) item2->next->prev = item1;
+        item1->next = item2->next;
+        item2->prev = item1->prev;
+        item2->next = item1;
+        item1->prev = item2;
+    }
+
+    else if(item1->prev == item2){
+        if(item1->next != nullptr) item1->next->prev = item2;
+        if(item2->prev != nullptr) item2->prev->next = item1;
+        item2->next = item1->next;
+        item1->prev = item2->prev;
+        item1->next = item2;
+        item2->prev = item1;
+    }
+    else{
+        if(item1->prev != nullptr) item1->prev->next = item2;
+        if(item2->next != nullptr) item2->next->prev = item1;
+        if(item1->next != nullptr) item1->next->prev = item2;
+        if(item2->prev != nullptr) item2->prev->next = item1;
+        aux = item1->prev;
+        item1->prev = item2->prev;
+        item2->prev = aux;
+        aux = item1->next;
+        item1->next = item2->next;
+        item2->next = aux;
+    }
+    
+    return inicio;
+};
+
+Node* b_sort(Node **item1){
+    bool teste = true;
+    Node* item2 = (*item1)->next;
+    Node* inicio = *item1;
+
+    while(teste == true){
+        teste = false;
+
+        while((*item1)->next != nullptr){
+            item2 = (*item1)->next;
+
+            if(item2->data < (*item1)->data){
+                inicio = troca(inicio, *item1, item2);
+                teste = true;
+
+            }
+            else{
+                *item1 = (*item1)->next;
+            }
+        }
+        *item1 = inicio;
+    }
+    return inicio;
+};
+
+void posiciona(Node **inicio, Node *item){
+    Node *aux = item;
+    int dat = item->data;
+    
+    if(item->prev == nullptr) return;
+
+    while(item->prev != nullptr && item->prev->data > dat){
+        item = item->prev;
+    }
+
+    if(item->data <= dat) return;
+
+    if(item->next != aux){
+        if(item->prev != nullptr) item->prev->next = aux;
+        else{
+            *inicio = aux;
+        }
+        if(aux->next != nullptr) aux->next->prev = aux->prev;
+        if(aux->prev != nullptr) aux->prev->next = aux->next;
+        aux->next = item;
+        aux->prev = item->prev;
+        item->prev = aux;
+    }
+
+    else if(item->next == aux){
+        *inicio = troca(*inicio, item, aux); 
+        // if(item->prev != nullptr) item->prev->next = aux;
+        // else{
+        //     *inicio = aux;
+        // }
+        // if(aux->next != nullptr) aux->next->prev = item;
+        // aux->prev = item->prev;
+        // item->prev = aux;
+        // item->next = aux->next;
+        // aux->next = item;
+    }
+    
+};
+
+void i_sort(Node **inicio){
+    Node *aux = *inicio, *aux2;
+    
+    while(aux != nullptr){
+        aux2 = aux->next;
+        posiciona(inicio, aux);
+        aux = aux2;
+    }
+};
+
+int tamanho(Node *inicio){
+    int cont = 0;
+    while(inicio != nullptr){
+        inicio = inicio->next;
+        cont ++;
+    }
+    return cont;
+};
+
+void shell_sort(Node **inicio){
+    Node *aux = *inicio, *lista1, *lista2, *idivide_lista;
+    int itamanho = tamanho(aux), i = 0;
+    
+    while(i < itamanho/2){
+        aux = aux->next;
+        i++;
+    }
+    if(itamanho % 2 == 0) idivide_lista = aux;
+    else idivide_lista = aux->next;
+    aux = *inicio;
+
+    Node *tmp, *tmp2, *aux2;
+    
+    if(aux->data > idivide_lista->data){
+        *inicio = troca(*inicio, aux, idivide_lista);
+        idivide_lista = aux;
+    } 
+
+    while(idivide_lista != nullptr){
+        tmp = idivide_lista->next;
+        tmp2 = aux->next;
+        if(idivide_lista->data < aux->data){
+            *inicio = troca(*inicio, aux, idivide_lista);
+        }
+
+        idivide_lista = tmp;
+        aux = tmp2;
+    }
+
+    i = 0;
+    aux = *inicio;
+
+    while(i < (itamanho/2) - 1){
+        aux = aux->next;
+        i++;
+    }
+
+    idivide_lista = aux;
+    aux = idivide_lista->prev->prev;
+
+    while(idivide_lista != nullptr){
+        tmp = idivide_lista->next;
+        tmp2 = idivide_lista->prev;
+        
+        while(aux != nullptr){
+
+            if(idivide_lista->data < aux->data){
+                *inicio = troca(*inicio, aux, idivide_lista);
+                if(idivide_lista->prev != nullptr) aux = (idivide_lista->prev)->prev;
+                else aux = nullptr;
+            }
+            else aux = nullptr;
+
+        }
+        idivide_lista = tmp;
+        aux = tmp2;
+    }
+
+    i_sort(inicio);
+
+};
+
 // A função convertToLL é usada para realizar a conversão da árvore para a lista duplamente encadeada
 // A função recebe três argumentos: o ponteiro para a raiz da árvore (root), o ponteiro para o 
 // ponteiro para a cabeça da lista (head), e o ponteiro para o ponteiro para o final da lista (tail).
@@ -599,3 +784,5 @@ int drawMenuVisualization() {
         else if(controle == 0) return 0;
     }
 }
+
+
