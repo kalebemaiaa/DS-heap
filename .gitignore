@@ -35,6 +35,7 @@
 # PASTAS DE TESTES
 /inputs
 /outputs
+*.txt
 
 # ARQUIVO GERADO NO CODESPACES
 main

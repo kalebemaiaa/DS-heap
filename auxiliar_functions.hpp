@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
+#include <cmath>
 
 #define NULLVAL -666
 
@@ -64,11 +65,6 @@ void printTree(Node *root, int iTabulation, char cDirection) {
     printTree(root -> ptrRight, iTabulation + 1,'\\');
 }
 
-void printVertical(Node *root) {
-    if(!root) return;
-
-}
-
 /*
     DEVOLVE O TAMANHO DA ARVORE
 */
@@ -87,6 +83,26 @@ int getHeight(Node *root) {
     if(iHeightLft > iHeightRgt)  
         return iHeightLft + 1;
     return iHeightRgt + 1;
+}
+
+void printVertical(Node *root, int andar, int posicaoFila) {
+    int iAltura  = getHeight(root);
+    int iQtdBlank = (pow(2, iAltura ) - 1);
+    for(int i = 0; i < iQtdBlank; i++){
+        if(i < iQtdBlank / 2) cout << "  ";
+        else cout << "--";
+    }
+    (root != nullptr) ? cout <<  root -> iData : cout << " X ";
+    for(int i = 0; i < iQtdBlank; i++){
+        if(i < iQtdBlank / 2 + 1) cout << "--";
+        else cout << "  ";
+    }
+    if(pow(2, andar - 1) == posicaoFila){
+        cout << endl;
+        andar++;
+    } 
+    printVertical(root -> ptrLeft, andar, posicaoFila + 1);
+    printVertical(root -> ptrRight, andar, posicaoFila + 1 + 1);
 }
 
 Node *searchValue(Node *root, int iValue) {
@@ -112,6 +128,12 @@ int writingComplete(Node *root, FILE *out) {
     return s;
 }
 
+static int writeAuxiliar(Node *ptrRoot, FILE *out) {
+    if(!out || !ptrRoot) return 0;
+    fprintf(out, "%i ", ptrRoot -> iData);
+    return 1 + writeAuxiliar(ptrRoot -> ptrLeft, out) + writeAuxiliar(ptrRoot -> ptrRight, out);
+}
+
 /*
     FUNCAO PARA ESCREVER ARQUIVO (PRECISA DO NOME E DO FORMATO PARA ESCREVER, ALEM DA RAIZ)
 */
@@ -123,7 +145,7 @@ int writeFile(Node *root, const char *sFileName, int iFormat2Write){
     }
 
     if(iFormat2Write == 0) {
-
+        writeAuxiliar(root, out);
     }
     else{
         return writingComplete(root, out);
@@ -180,7 +202,6 @@ Node *openFile(const char *sFileName, int iFormat2Read) {
             break;
     }
     cout << "\nArvore carregada, raiz em :" << root << endl << endl;
-    printTree(root, 0, ' ');
     return root;
 }
 
@@ -212,5 +233,3 @@ void convertToLL(Node* root, Node** head, Node** tail) {
 // A função convertToLL é usada para realizar a conversão da árvore para a lista duplamente encadeada
 // A função recebe três argumentos: o ponteiro para a raiz da árvore (root), o ponteiro para o 
 // ponteiro para a cabeça da lista (head), e o ponteiro para o ponteiro para o final da lista (tail).
-
-
