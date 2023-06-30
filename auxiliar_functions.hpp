@@ -513,7 +513,49 @@ void s_sort(Node **ptrInicio){
     }
 };
 
+// FUNÇÕES PARA REMOVER NO DE ACORDO COM O VALOR INTEIRO SOLICITADO
+Node* remove(Node *ptrAtual){
+    Node *ptrNo1, *ptrNo2;
+    if(ptrAtual->ptrLeft == NULL){
+        ptrNo2 = ptrAtual->ptrRight;
+        free(ptrAtual);
+        return ptrNo2;
+    }
+    ptrNo1 = ptrAtual;
+    ptrNo2 = ptrAtual->ptrLeft;
+    while(ptrNo2->ptrRight != NULL){
+        ptrNo1 = ptrNo2;
+        ptrNo2 = ptrNo2->ptrRight;
+    }
 
+    if(ptrNo1 != ptrAtual){
+        ptrNo1->ptrRight = ptrNo2->ptrLeft;
+        ptrNo2->ptrLeft = ptrAtual->ptrLeft;
+    }
+
+    ptrNo2->ptrRight = ptrAtual->ptrRight;
+    free(ptrAtual);
+    return ptrNo2;
+};
+
+int remove_final(Node **ptrRoot, int iValor){
+    if(ptrRoot == NULL) return 0;
+    Node *ptrAnt = NULL;
+    Node *ptrAtual = *ptrRoot;
+    while(ptrAtual != NULL){
+        if(iValor == ptrAtual->iData){
+            if(ptrAtual == *ptrRoot) *ptrRoot = remove(ptrAtual);
+            else{
+                if(ptrAnt->ptrRight == ptrAtual) ptrAnt->ptrRight = remove(ptrAtual);
+                else ptrAnt->ptrLeft = remove(ptrAtual);
+            }
+            return 1;
+        }
+        ptrAnt = ptrAtual;
+        if(iValor > ptrAtual->iData) ptrAtual = ptrAtual->ptrRight;
+        else ptrAtual = ptrAtual->ptrLeft;
+    }
+}
 /**
  * Desenha o menu principal
  * 
