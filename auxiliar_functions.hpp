@@ -801,3 +801,5 @@ int drawMenuVisualization() {
         else if(controle == 0) return 0;
     }
 }
+
+
