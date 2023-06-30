@@ -263,6 +263,10 @@ void convertToLL(Node* root, Node** head, Node** tail) {
     // Converter a subárvore direita em uma lista duplamente encadeada
     convertToLL(root->ptrRight, head, tail);
 }
+// A função convertToLL é usada para realizar a conversão da árvore para a lista duplamente encadeada
+// A função recebe três argumentos: o ponteiro para a raiz da árvore (root), o ponteiro para o 
+// ponteiro para a cabeça da lista (head), e o ponteiro para o ponteiro para o final da lista (tail).
+
 
 /*
 // FUNÇÕES INCREMENTADAS PARA ORDENAÇÃO DE LISTA ENCADEADA DUPLA:
@@ -449,11 +453,31 @@ void shell_sort(Node **inicio){
     i_sort(inicio);
 
 };
+
+void s_sort_aux(Node **inicio){
+    Node *aux = *inicio, *menor = *inicio;
+
+    while(aux->next != nullptr){
+        if((aux->next)->data <= menor->data){
+            menor = aux->next;
+        }
+        aux = aux->next;
+    }
+
+    *inicio = troca(*inicio, *inicio, menor);
+};
+
+void s_sort(Node **inicio){
+    s_sort_aux(inicio);
+    Node *aux = (*inicio)->next, *aux2;
+    while(aux->next != nullptr){
+        aux2 = aux->next;
+        s_sort_aux(&aux);
+        aux = aux2;
+    }
+};
 */
 
-// A função convertToLL é usada para realizar a conversão da árvore para a lista duplamente encadeada
-// A função recebe três argumentos: o ponteiro para a raiz da árvore (root), o ponteiro para o 
-// ponteiro para a cabeça da lista (head), e o ponteiro para o ponteiro para o final da lista (tail).
 
 /**
  * Desenha o menu principal
