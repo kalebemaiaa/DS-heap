@@ -60,6 +60,21 @@ void insertNode(Node **ptrRoot, int iValue) {
     else insertNode(&((*ptrRoot) -> ptrRight), iValue);
 }
 
+int get_int(){
+    int iGetInput;
+    cin >> iGetInput;
+    while (cin.fail())
+    {
+
+        cout << "Error: numero invalido. -> DIGITE:  ";
+        cin.clear(); 
+        cin.ignore(1000, '\n');
+        cin >> iGetInput;
+    }
+
+    return iGetInput;
+}
+
 /**
  * Função auxiliar para printar arvore, vai cuidar da tabulação para facilitar visualização
  * 
@@ -508,7 +523,7 @@ int drawMenuInsert() {
         cout << "- Voltar no menu anterior: \tDIGITE 3" << endl;
         cout << "- Para sair do programa: \tDIGITE 0" << endl;
         cout << "\nDIGITE UM NUMERO: ";
-        cin >> controle;
+        controle = get_int();
         system("cls || clear");
         
         if(controle == 1){
@@ -516,15 +531,15 @@ int drawMenuInsert() {
             cout << "Digite o nome do arquivo: ";
             cin >> sFileName;
             system("cls || clear");
-            int iReadModo;
-            do{
+            int iReadModo = 2;
+            while(iReadModo != 1 && iReadModo != 0){
                 cout << "Digite o modo de leitura:" << endl;
                 cout << "\t - 0 - para ler numero por numero e usar a funcao insert." << endl;
                 cout << "\t - 1 - para ler um arquivo in order completo com NULVAL." << endl << "DIGITE:  ";
-                cin >> iReadModo; 
+                iReadModo = get_int(); 
                 
                 system("cls || clear");
-            }while(iReadModo > 1 || iReadModo < 0);
+            }
 
             Node *ptrNewRoot = openFile(sFileName.c_str(), iReadModo);
             if(!ptrNewRoot) continue;
@@ -538,14 +553,14 @@ int drawMenuInsert() {
             while(true){
                 printTreeHorizontal(ptrNewRoot, 0, 1);
                 cout << "\nDigite um numero para inserir na arvore:  ";
-                cin >> iGetInput;
+                iGetInput = get_int();
                 cout << endl;
                 insertNode(&ptrNewRoot, iGetInput);
                 printTreeHorizontal(ptrNewRoot, 0, 1);
                 char controle;
                 do{
                     cout << "Deseja inserir outro numero?(Y/N)  ";
-                    cin >> controle;
+                    controle = get_int();
                     cout << controle;
                     system("clear || cls");
                 }while(controle != 'N' && controle != 'n' && controle != 'Y' && controle != 'y');
@@ -573,7 +588,7 @@ int chooseTree(){
         cout << "\nCom qual arvore deseja trabalhar? { ";
         for(int i = 0; i < iTreeCount; i++) cout << i+1 << " ";
         cout << "}\nDIGITE: ";
-        cin >> iChooseTree;
+        iChooseTree = get_int();
         system("cls || clear");
     }while(iChooseTree < 1 || iChooseTree > iTreeCount);
 
@@ -615,8 +630,8 @@ int drawMenuShow() {
         cout << "- Deseja voltar ao menu anterior: \tDIGITE 7" << endl;
         cout << "- Deseja trocar a arvore: \t\tDIGITE 8" << endl;
         cout << "- Sair do programa: \t\t\tDIGITE 0" << endl;
-        cout << "\nDIGITE UM NUMERO: ";
-        cin >> controle;
+        cout << "\nDIGITE: ";
+        controle = get_int();
         system("cls || clear");
         if(controle > 8 || controle < 0) continue;
         if(controle == 0) return 0;
@@ -636,7 +651,7 @@ int drawMenuShow() {
         else if(controle == 3) {
             int iValue2Search;
             cout << "Digite um valor para ser procurado:  ";
-            cin >> iValue2Search;
+            iValue2Search = get_int();
             system("cls || clear");
             Node *ptrValue = searchValue(ptrAllTree[iChooseTree - 1], iValue2Search);
 
@@ -662,7 +677,8 @@ int drawMenuShow() {
             cout << "- Deseja voltar ao menu inicial: \t\tDIGITE 2" << endl;
             cout << "- Deseja trocar a arvore: \t\t\tDIGITE 3" << endl;
             cout << "- Deseja encerrar o programa: \t\t\tDIGITE 0" << endl;
-            cin >> iContinue;
+            cout << "DIGITE:  ";
+            iContinue = get_int();
             system("cls || clear");
         }while(iContinue > 3 && iContinue < 0);
 
@@ -705,8 +721,8 @@ int drawMenuChange() {
         cout << "- Deseja voltar ao menu anterior: \tDIGITE 4" << endl;
         cout << "- Deseja trocar a arvore: \t\tDIGITE 5" << endl;
         cout << "- Sair do programa: \t\t\tDIGITE 0" << endl;
-        cout << "\nDIGITE UM NUMERO: ";
-        cin >> controle;
+        cout << "\nDIGITE: ";
+        controle = get_int();
         system("cls || clear");
         if(controle > 4 || controle < 0) continue;
         if(controle == 1) {
@@ -714,7 +730,7 @@ int drawMenuChange() {
             while(true){
                 printTreeHorizontal(ptrAllTree[iChooseTree - 1], 0, 1);
                 cout << "\nDigite um numero para inserir na arvore:  ";
-                cin >> iGetInput;
+                iGetInput = get_int();
                 cout << endl;
                 insertNode(&(ptrAllTree[iChooseTree - 1]), iGetInput);
                 printTreeHorizontal(ptrAllTree[iChooseTree - 1], 0, 1);
@@ -741,7 +757,7 @@ int drawMenuChange() {
                 cout << "Digite o modo de escrita:" << endl;
                 cout << "\t - 0 - para ler numero por numero e usar a funcao insert." << endl;
                 cout << "\t - 1 - para ler um arquivo in order completo com NULVAL." << endl << "DIGITE:  ";
-                cin >> iWriteModo; 
+                iWriteModo = get_int(); 
                 
                 system("cls || clear");
             }while(iWriteModo > 1 || iWriteModo < 0);
@@ -789,7 +805,7 @@ int drawMenuVisualization() {
         cout << "- Deseja trocar a arvore: \t\tDIGITE 4" << endl;
         cout << "- Sair do programa: \t\t\tDIGITE 0" << endl;
         cout << "\nDIGITE UM NUMERO: ";
-        cin >> controle;
+        controle = get_int();
         system("cls || clear");
         if(controle > 4 || controle < 0) continue;
 
@@ -800,7 +816,7 @@ int drawMenuVisualization() {
             do{
                 cout << " - Voltar no menu anterior: DIGITE 1" << endl;
                 cout << " - Sair do programa: \tDIGITE 0" << endl;
-                cin >> iGetInput;
+                iGetInput = get_int();
                 system("clear || cls");
             }while(iGetInput > 1 || iGetInput < 0);
             if(iGetInput == 0) return 0;
@@ -812,7 +828,8 @@ int drawMenuVisualization() {
             do{
                 cout << " - Voltar no menu anterior: \tDIGITE 1" << endl;
                 cout << " - Sair do programa: \tDIGITE 0" << endl;
-                cin >> iGetInput;
+                cout << "DIGITE:  ";
+                iGetInput = get_int();
                 system("clear || cls");
             }while(iGetInput > 1 || iGetInput < 0);
             if(iGetInput == 0) return 0;
