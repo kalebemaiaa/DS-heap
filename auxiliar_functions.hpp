@@ -189,14 +189,14 @@ int writeFile(Node *root, const char *sFileName, int iFormat2Write){
         cout << "Error: não foi possível abrir o arquivo: [" << sFileName << "] para escrever tree.\n";
         return -1; 
     }
+    int iQtdWrited = -2;
+    if(iFormat2Write == 0) 
+        iQtdWrited = writeAuxiliar(root, out);
+    else
+        iQtdWrited = writingComplete(root, out);
 
-    if(iFormat2Write == 0) {
-        writeAuxiliar(root, out);
-    }
-    else{
-        return writingComplete(root, out);
-    }
-    return -2;
+    fclose(out);
+    return iQtdWrited;
 }
 
 /*
@@ -262,6 +262,191 @@ void convertToLL(Node* root, Node** head, Node** tail) {
     // Converter a subárvore direita em uma lista duplamente encadeada
     convertToLL(root->ptrRight, head, tail);
 }
+
+// FUNÇÕES INCREMENTADAS PARA ORDENAÇÃO DE LISTA ENCADEADA DUPLA:
+Node *troca(Node *inicio, Node *item1, Node *item2){
+    Node *aux;
+    // inicio = item2;
+    if(item1->prev == nullptr) inicio = item2;
+    if(item2->prev == nullptr) inicio = item1;
+    if(item2->prev == item1){
+        if(item1->prev != nullptr) item1->prev->next = item2;
+        if(item2->next != nullptr) item2->next->prev = item1;
+        item1->next = item2->next;
+        item2->prev = item1->prev;
+        item2->next = item1;
+        item1->prev = item2;
+    }
+
+    else if(item1->prev == item2){
+        if(item1->next != nullptr) item1->next->prev = item2;
+        if(item2->prev != nullptr) item2->prev->next = item1;
+        item2->next = item1->next;
+        item1->prev = item2->prev;
+        item1->next = item2;
+        item2->prev = item1;
+    }
+    else{
+        if(item1->prev != nullptr) item1->prev->next = item2;
+        if(item2->next != nullptr) item2->next->prev = item1;
+        if(item1->next != nullptr) item1->next->prev = item2;
+        if(item2->prev != nullptr) item2->prev->next = item1;
+        aux = item1->prev;
+        item1->prev = item2->prev;
+        item2->prev = aux;
+        aux = item1->next;
+        item1->next = item2->next;
+        item2->next = aux;
+    }
+    
+    return inicio;
+};
+
+Node* b_sort(Node **item1){
+    bool teste = true;
+    Node* item2 = (*item1)->next;
+    Node* inicio = *item1;
+
+    while(teste == true){
+        teste = false;
+
+        while((*item1)->next != nullptr){
+            item2 = (*item1)->next;
+
+            if(item2->data < (*item1)->data){
+                inicio = troca(inicio, *item1, item2);
+                teste = true;
+
+            }
+            else{
+                *item1 = (*item1)->next;
+            }
+        }
+        *item1 = inicio;
+    }
+    return inicio;
+};
+
+void posiciona(Node **inicio, Node *item){
+    Node *aux = item;
+    int dat = item->data;
+    
+    if(item->prev == nullptr) return;
+
+    while(item->prev != nullptr && item->prev->data > dat){
+        item = item->prev;
+    }
+
+    if(item->data <= dat) return;
+
+    if(item->next != aux){
+        if(item->prev != nullptr) item->prev->next = aux;
+        else{
+            *inicio = aux;
+        }
+        if(aux->next != nullptr) aux->next->prev = aux->prev;
+        if(aux->prev != nullptr) aux->prev->next = aux->next;
+        aux->next = item;
+        aux->prev = item->prev;
+        item->prev = aux;
+    }
+
+    else if(item->next == aux){
+        *inicio = troca(*inicio, item, aux); 
+        // if(item->prev != nullptr) item->prev->next = aux;
+        // else{
+        //     *inicio = aux;
+        // }
+        // if(aux->next != nullptr) aux->next->prev = item;
+        // aux->prev = item->prev;
+        // item->prev = aux;
+        // item->next = aux->next;
+        // aux->next = item;
+    }
+    
+};
+
+void i_sort(Node **inicio){
+    Node *aux = *inicio, *aux2;
+    
+    while(aux != nullptr){
+        aux2 = aux->next;
+        posiciona(inicio, aux);
+        aux = aux2;
+    }
+};
+
+int tamanho(Node *inicio){
+    int cont = 0;
+    while(inicio != nullptr){
+        inicio = inicio->next;
+        cont ++;
+    }
+    return cont;
+};
+
+void shell_sort(Node **inicio){
+    Node *aux = *inicio, *lista1, *lista2, *idivide_lista;
+    int itamanho = tamanho(aux), i = 0;
+    
+    while(i < itamanho/2){
+        aux = aux->next;
+        i++;
+    }
+    if(itamanho % 2 == 0) idivide_lista = aux;
+    else idivide_lista = aux->next;
+    aux = *inicio;
+
+    Node *tmp, *tmp2, *aux2;
+    
+    if(aux->data > idivide_lista->data){
+        *inicio = troca(*inicio, aux, idivide_lista);
+        idivide_lista = aux;
+    } 
+
+    while(idivide_lista != nullptr){
+        tmp = idivide_lista->next;
+        tmp2 = aux->next;
+        if(idivide_lista->data < aux->data){
+            *inicio = troca(*inicio, aux, idivide_lista);
+        }
+
+        idivide_lista = tmp;
+        aux = tmp2;
+    }
+
+    i = 0;
+    aux = *inicio;
+
+    while(i < (itamanho/2) - 1){
+        aux = aux->next;
+        i++;
+    }
+
+    idivide_lista = aux;
+    aux = idivide_lista->prev->prev;
+
+    while(idivide_lista != nullptr){
+        tmp = idivide_lista->next;
+        tmp2 = idivide_lista->prev;
+        
+        while(aux != nullptr){
+
+            if(idivide_lista->data < aux->data){
+                *inicio = troca(*inicio, aux, idivide_lista);
+                if(idivide_lista->prev != nullptr) aux = (idivide_lista->prev)->prev;
+                else aux = nullptr;
+            }
+            else aux = nullptr;
+
+        }
+        idivide_lista = tmp;
+        aux = tmp2;
+    }
+
+    i_sort(inicio);
+
+};
 
 // A função convertToLL é usada para realizar a conversão da árvore para a lista duplamente encadeada
 // A função recebe três argumentos: o ponteiro para a raiz da árvore (root), o ponteiro para o 
@@ -338,7 +523,7 @@ int drawMenuInsert() {
                     system("clear || cls");
                 }while(controle != 'N' && controle != 'n' && controle != 'Y' && controle != 'y');
 
-                if(controle == 'N') break;
+                if(controle == 'N' || controle == 'n') break;
             }
 
             ptrAllTree = (Node **) realloc(ptrAllTree, ++iTreeCount);
@@ -489,9 +674,9 @@ int drawMenuChange() {
         cout << "\t\t \e[1;45m- ARVORE " << iChooseTree << " - \e[0m\n" << endl;
         cout << "- Inserir elemento: \t\t\tDIGITE 1" << endl;
         cout << "- Remover elemento: \t\t\tDIGITE 2" << endl;
-        cout << "- Escrever em arquivo: \t\t\tDIGITE 2" << endl;
-        cout << "- Deseja voltar ao menu anterior: \tDIGITE 3" << endl;
-        cout << "- Deseja trocar a arvore: \t\tDIGITE 4" << endl;
+        cout << "- Escrever em arquivo: \t\t\tDIGITE 3" << endl;
+        cout << "- Deseja voltar ao menu anterior: \tDIGITE 4" << endl;
+        cout << "- Deseja trocar a arvore: \t\tDIGITE 5" << endl;
         cout << "- Sair do programa: \t\t\tDIGITE 0" << endl;
         cout << "\nDIGITE UM NUMERO: ";
         cin >> controle;
@@ -519,8 +704,25 @@ int drawMenuChange() {
         else if(controle == 2) {
             cout << "Erique's working hard" << endl;
         }
-        else if(controle == 3) return 1;
-        else if(controle == 4) { 
+        else if(controle == 3){
+            string sFileName;
+            cout << "Digite o nome do arquivo: ";
+            cin >> sFileName;
+            system("cls || clear");
+            int iWriteModo;
+            do{
+                cout << "Digite o modo de escrita:" << endl;
+                cout << "\t - 0 - para ler numero por numero e usar a funcao insert." << endl;
+                cout << "\t - 1 - para ler um arquivo in order completo com NULVAL." << endl << "DIGITE:  ";
+                cin >> iWriteModo; 
+                
+                system("cls || clear");
+            }while(iWriteModo > 1 || iWriteModo < 0);
+            int iQtdWrited = writeFile(ptrAllTree[iChooseTree - 1], sFileName.c_str(), iWriteModo);
+            cout << iQtdWrited << " nohs foram escritos no arquivo [" << sFileName << "] no modo " << iWriteModo << endl;
+        }   
+        else if(controle == 4) return 1;
+        else if(controle == 5) { 
             iChooseTree = chooseTree();
             continue;
         }

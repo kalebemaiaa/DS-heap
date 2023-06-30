@@ -24,7 +24,6 @@ int main() {
         if(controle == 2) controle = drawMenuInsert();
         else if(controle == 3) controle = drawMenuShow();
         else if(controle == 4) controle = drawMenuChange();
-        else if(controle == 4) controle = drawMenuChange();
         else if(controle == 5) controle = drawMenuVisualization();
     };
     return 0;
