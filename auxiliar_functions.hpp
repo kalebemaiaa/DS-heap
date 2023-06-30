@@ -304,215 +304,214 @@ void convertToLL(Node* root, Node** head, Node** tail) {
 // ponteiro para a cabeça da lista (head), e o ponteiro para o ponteiro para o final da lista (tail).
 
 
-/*
 // FUNÇÕES INCREMENTADAS PARA ORDENAÇÃO DE LISTA ENCADEADA DUPLA:
-Node *troca(Node *inicio, Node *item1, Node *item2){
-    Node *aux;
-    // inicio = item2;
-    if(item1->prev == nullptr) inicio = item2;
-    if(item2->prev == nullptr) inicio = item1;
-    if(item2->prev == item1){
-        if(item1->prev != nullptr) item1->prev->next = item2;
-        if(item2->next != nullptr) item2->next->prev = item1;
-        item1->next = item2->next;
-        item2->prev = item1->prev;
-        item2->next = item1;
-        item1->prev = item2;
+
+Node *troca(Node *ptrInicio, Node *ptrItem1, Node *ptrItem2){
+    Node *ptrAux;
+    // ptrInicio = ptrItem2;
+    if(ptrItem1->ptrLeft == nullptr) ptrInicio = ptrItem2;
+    if(ptrItem2->ptrLeft == nullptr) ptrInicio = ptrItem1;
+    if(ptrItem2->ptrLeft == ptrItem1){
+        if(ptrItem1->ptrLeft != nullptr) ptrItem1->ptrLeft->ptrRight = ptrItem2;
+        if(ptrItem2->ptrRight != nullptr) ptrItem2->ptrRight->ptrLeft = ptrItem1;
+        ptrItem1->ptrRight = ptrItem2->ptrRight;
+        ptrItem2->ptrLeft = ptrItem1->ptrLeft;
+        ptrItem2->ptrRight = ptrItem1;
+        ptrItem1->ptrLeft = ptrItem2;
     }
 
-    else if(item1->prev == item2){
-        if(item1->next != nullptr) item1->next->prev = item2;
-        if(item2->prev != nullptr) item2->prev->next = item1;
-        item2->next = item1->next;
-        item1->prev = item2->prev;
-        item1->next = item2;
-        item2->prev = item1;
+    else if(ptrItem1->ptrLeft == ptrItem2){
+        if(ptrItem1->ptrRight != nullptr) ptrItem1->ptrRight->ptrLeft = ptrItem2;
+        if(ptrItem2->ptrLeft != nullptr) ptrItem2->ptrLeft->ptrRight = ptrItem1;
+        ptrItem2->ptrRight = ptrItem1->ptrRight;
+        ptrItem1->ptrLeft = ptrItem2->ptrLeft;
+        ptrItem1->ptrRight = ptrItem2;
+        ptrItem2->ptrLeft = ptrItem1;
     }
     else{
-        if(item1->prev != nullptr) item1->prev->next = item2;
-        if(item2->next != nullptr) item2->next->prev = item1;
-        if(item1->next != nullptr) item1->next->prev = item2;
-        if(item2->prev != nullptr) item2->prev->next = item1;
-        aux = item1->prev;
-        item1->prev = item2->prev;
-        item2->prev = aux;
-        aux = item1->next;
-        item1->next = item2->next;
-        item2->next = aux;
+        if(ptrItem1->ptrLeft != nullptr) ptrItem1->ptrLeft->ptrRight = ptrItem2;
+        if(ptrItem2->ptrRight != nullptr) ptrItem2->ptrRight->ptrLeft = ptrItem1;
+        if(ptrItem1->ptrRight != nullptr) ptrItem1->ptrRight->ptrLeft = ptrItem2;
+        if(ptrItem2->ptrLeft != nullptr) ptrItem2->ptrLeft->ptrRight = ptrItem1;
+        ptrAux = ptrItem1->ptrLeft;
+        ptrItem1->ptrLeft = ptrItem2->ptrLeft;
+        ptrItem2->ptrLeft = ptrAux;
+        ptrAux = ptrItem1->ptrRight;
+        ptrItem1->ptrRight = ptrItem2->ptrRight;
+        ptrItem2->ptrRight = ptrAux;
     }
     
-    return inicio;
+    return ptrInicio;
 };
 
-Node* b_sort(Node **item1){
-    bool teste = true;
-    Node* item2 = (*item1)->next;
-    Node* inicio = *item1;
+Node* b_sort(Node **ptrItem1){
+    bool bTeste = true;
+    Node* ptrItem2 = (*ptrItem1)->ptrRight;
+    Node* ptrInicio = *ptrItem1;
 
-    while(teste == true){
-        teste = false;
+    while(bTeste == true){
+        bTeste = false;
 
-        while((*item1)->next != nullptr){
-            item2 = (*item1)->next;
+        while((*ptrItem1)->ptrRight != nullptr){
+            ptrItem2 = (*ptrItem1)->ptrRight;
 
-            if(item2->data < (*item1)->data){
-                inicio = troca(inicio, *item1, item2);
-                teste = true;
+            if(ptrItem2->iData < (*ptrItem1)->iData){
+                ptrInicio = troca(ptrInicio, *ptrItem1, ptrItem2);
+                bTeste = true;
 
             }
             else{
-                *item1 = (*item1)->next;
+                *ptrItem1 = (*ptrItem1)->ptrRight;
             }
         }
-        *item1 = inicio;
+        *ptrItem1 = ptrInicio;
     }
-    return inicio;
+    return ptrInicio;
 };
 
-void posiciona(Node **inicio, Node *item){
-    Node *aux = item;
-    int dat = item->data;
+void posiciona(Node **ptrInicio, Node *ptrItem){
+    Node *ptrAux = ptrItem;
+    int dat = ptrItem->iData;
     
-    if(item->prev == nullptr) return;
+    if(ptrItem->ptrLeft == nullptr) return;
 
-    while(item->prev != nullptr && item->prev->data > dat){
-        item = item->prev;
+    while(ptrItem->ptrLeft != nullptr && ptrItem->ptrLeft->iData > dat){
+        ptrItem = ptrItem->ptrLeft;
     }
 
-    if(item->data <= dat) return;
+    if(ptrItem->iData <= dat) return;
 
-    if(item->next != aux){
-        if(item->prev != nullptr) item->prev->next = aux;
+    if(ptrItem->ptrRight != ptrAux){
+        if(ptrItem->ptrLeft != nullptr) ptrItem->ptrLeft->ptrRight = ptrAux;
         else{
-            *inicio = aux;
+            *ptrInicio = ptrAux;
         }
-        if(aux->next != nullptr) aux->next->prev = aux->prev;
-        if(aux->prev != nullptr) aux->prev->next = aux->next;
-        aux->next = item;
-        aux->prev = item->prev;
-        item->prev = aux;
+        if(ptrAux->ptrRight != nullptr) ptrAux->ptrRight->ptrLeft = ptrAux->ptrLeft;
+        if(ptrAux->ptrLeft != nullptr) ptrAux->ptrLeft->ptrRight = ptrAux->ptrRight;
+        ptrAux->ptrRight = ptrItem;
+        ptrAux->ptrLeft = ptrItem->ptrLeft;
+        ptrItem->ptrLeft = ptrAux;
     }
 
-    else if(item->next == aux){
-        *inicio = troca(*inicio, item, aux); 
-        // if(item->prev != nullptr) item->prev->next = aux;
+    else if(ptrItem->ptrRight == ptrAux){
+        *ptrInicio = troca(*ptrInicio, ptrItem, ptrAux); 
+        // if(ptrItem->ptrLeft != nullptr) ptrItem->ptrLeft->ptrRight = ptrAux;
         // else{
-        //     *inicio = aux;
+        //     *ptrInicio = ptrAux;
         // }
-        // if(aux->next != nullptr) aux->next->prev = item;
-        // aux->prev = item->prev;
-        // item->prev = aux;
-        // item->next = aux->next;
-        // aux->next = item;
+        // if(ptrAux->ptrRight != nullptr) ptrAux->ptrRight->ptrLeft = ptrItem;
+        // ptrAux->ptrLeft = ptrItem->ptrLeft;
+        // ptrItem->ptrLeft = ptrAux;
+        // ptrItem->ptrRight = ptrAux->ptrRight;
+        // ptrAux->ptrRight = ptrItem;
     }
     
 };
 
-void i_sort(Node **inicio){
-    Node *aux = *inicio, *aux2;
+void i_sort(Node **ptrInicio){
+    Node *ptrAux = *ptrInicio, *ptrAux2;
     
-    while(aux != nullptr){
-        aux2 = aux->next;
-        posiciona(inicio, aux);
-        aux = aux2;
+    while(ptrAux != nullptr){
+        ptrAux2 = ptrAux->ptrRight;
+        posiciona(ptrInicio, ptrAux);
+        ptrAux = ptrAux2;
     }
 };
 
-int tamanho(Node *inicio){
-    int cont = 0;
-    while(inicio != nullptr){
-        inicio = inicio->next;
-        cont ++;
+int tamanho(Node *ptrInicio){
+    int iCont = 0;
+    while(ptrInicio != nullptr){
+        ptrInicio = ptrInicio->ptrRight;
+        iCont ++;
     }
-    return cont;
+    return iCont;
 };
 
-void shell_sort(Node **inicio){
-    Node *aux = *inicio, *lista1, *lista2, *idivide_lista;
-    int itamanho = tamanho(aux), i = 0;
+void shell_sort(Node **ptrInicio){
+    Node *ptrAux = *ptrInicio, *ptrDivide_lista;
+    int itamanho = tamanho(ptrAux), i = 0;
     
     while(i < itamanho/2){
-        aux = aux->next;
+        ptrAux = ptrAux->ptrRight;
         i++;
     }
-    if(itamanho % 2 == 0) idivide_lista = aux;
-    else idivide_lista = aux->next;
-    aux = *inicio;
+    if(itamanho % 2 == 0) ptrDivide_lista = ptrAux;
+    else ptrDivide_lista = ptrAux->ptrRight;
+    ptrAux = *ptrInicio;
 
-    Node *tmp, *tmp2, *aux2;
+    Node *ptrTmp, *ptrTmp2, *ptrAux2;
     
-    if(aux->data > idivide_lista->data){
-        *inicio = troca(*inicio, aux, idivide_lista);
-        idivide_lista = aux;
+    if(ptrAux->iData > ptrDivide_lista->iData){
+        *ptrInicio = troca(*ptrInicio, ptrAux, ptrDivide_lista);
+        ptrDivide_lista = ptrAux;
     } 
 
-    while(idivide_lista != nullptr){
-        tmp = idivide_lista->next;
-        tmp2 = aux->next;
-        if(idivide_lista->data < aux->data){
-            *inicio = troca(*inicio, aux, idivide_lista);
+    while(ptrDivide_lista != nullptr){
+        ptrTmp = ptrDivide_lista->ptrRight;
+        ptrTmp2 = ptrAux->ptrRight;
+        if(ptrDivide_lista->iData < ptrAux->iData){
+            *ptrInicio = troca(*ptrInicio, ptrAux, ptrDivide_lista);
         }
 
-        idivide_lista = tmp;
-        aux = tmp2;
+        ptrDivide_lista = ptrTmp;
+        ptrAux = ptrTmp2;
     }
 
     i = 0;
-    aux = *inicio;
+    ptrAux = *ptrInicio;
 
     while(i < (itamanho/2) - 1){
-        aux = aux->next;
+        ptrAux = ptrAux->ptrRight;
         i++;
     }
 
-    idivide_lista = aux;
-    aux = idivide_lista->prev->prev;
+    ptrDivide_lista = ptrAux;
+    ptrAux = ptrDivide_lista->ptrLeft->ptrLeft;
 
-    while(idivide_lista != nullptr){
-        tmp = idivide_lista->next;
-        tmp2 = idivide_lista->prev;
+    while(ptrDivide_lista != nullptr){
+        ptrTmp = ptrDivide_lista->ptrRight;
+        ptrTmp2 = ptrDivide_lista->ptrLeft;
         
-        while(aux != nullptr){
+        while(ptrAux != nullptr){
 
-            if(idivide_lista->data < aux->data){
-                *inicio = troca(*inicio, aux, idivide_lista);
-                if(idivide_lista->prev != nullptr) aux = (idivide_lista->prev)->prev;
-                else aux = nullptr;
+            if(ptrDivide_lista->iData < ptrAux->iData){
+                *ptrInicio = troca(*ptrInicio, ptrAux, ptrDivide_lista);
+                if(ptrDivide_lista->ptrLeft != nullptr) ptrAux = (ptrDivide_lista->ptrLeft)->ptrLeft;
+                else ptrAux = nullptr;
             }
-            else aux = nullptr;
+            else ptrAux = nullptr;
 
         }
-        idivide_lista = tmp;
-        aux = tmp2;
+        ptrDivide_lista = ptrTmp;
+        ptrAux = ptrTmp2;
     }
 
-    i_sort(inicio);
+    i_sort(ptrInicio);
 
 };
 
-void s_sort_aux(Node **inicio){
-    Node *aux = *inicio, *menor = *inicio;
+void s_sort_ptrAux(Node **ptrInicio){
+    Node *ptrAux = *ptrInicio, *ptrMenor = *ptrInicio;
 
-    while(aux->next != nullptr){
-        if((aux->next)->data <= menor->data){
-            menor = aux->next;
+    while(ptrAux->ptrRight != nullptr){
+        if((ptrAux->ptrRight)->iData <= ptrMenor->iData){
+            ptrMenor = ptrAux->ptrRight;
         }
-        aux = aux->next;
+        ptrAux = ptrAux->ptrRight;
     }
 
-    *inicio = troca(*inicio, *inicio, menor);
+    *ptrInicio = troca(*ptrInicio, *ptrInicio, ptrMenor);
 };
 
-void s_sort(Node **inicio){
-    s_sort_aux(inicio);
-    Node *aux = (*inicio)->next, *aux2;
-    while(aux->next != nullptr){
-        aux2 = aux->next;
-        s_sort_aux(&aux);
-        aux = aux2;
+void s_sort(Node **ptrInicio){
+    s_sort_ptrAux(ptrInicio);
+    Node *ptrAux = (*ptrInicio)->ptrRight, *ptrAux2;
+    while(ptrAux->ptrRight != nullptr){
+        ptrAux2 = ptrAux->ptrRight;
+        s_sort_ptrAux(&ptrAux);
+        ptrAux = ptrAux2;
     }
 };
-*/
 
 
 /**
