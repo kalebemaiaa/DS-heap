@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <cmath>
+#include <chrono>
 
 #define NULLVAL -666
 
@@ -13,6 +14,19 @@ typedef struct Node {
 
 Node **ptrAllTree;
 int iTreeCount = 0;
+
+double measure_execution_time() {
+    chrono::high_resolution_clock::time_point start_time = chrono::high_resolution_clock::now();
+
+    // CHAMAR A FUNCAO QUE QUERO MEDIR AQUI
+    //funcao();  // Chama a função que você deseja medir
+
+    chrono::high_resolution_clock::time_point end_time = chrono::high_resolution_clock::now();
+
+    chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(end_time - start_time);
+
+   return time_span.count();
+}
 
 /**
  * Cria um novo noh
@@ -36,9 +50,9 @@ Node *createNode(int iValue) {
  */
 int deleteNode(Node *ptrNoh) {
     if(!ptrNoh) return NULLVAL;
-    int aux = ptrNoh -> iData;
+    int iAux = ptrNoh -> iData;
     free(ptrNoh);
-    return aux;
+    return iAux;
 }
 
 /**
@@ -173,7 +187,8 @@ Node *searchValue(Node *ptrRoot, int iValue) {
     return searchValue(ptrRoot -> ptrRight, iValue);
 }
 
-bool isPerfect(Node *root) {
+
+bool isPerfect(Node *ptrRoot) {
     return true;
 }
 
@@ -194,110 +209,130 @@ bool isComplete(Node *ptrRoot) {
  * Dado o endereço da raiz, escreve os valores da arvore em um arquivo
  * 
  * @param ptrRoot endereço que guarda a raiz
- * @param out ponteiro para o arquivo
+ * @param ptrOutFile ponteiro para o arquivo
  * @return inteiro que indica a quantidade de elementos escritos
  */
-int writingComplete(Node *ptrRoot, FILE *ptrOut) {
+int writingComplete(Node *ptrRoot, FILE *ptrOutFile) {
     int iCountNohs = 0;
     if(!ptrRoot){
-        fprintf(ptrOut, "%i ", NULLVAL);
+        fprintf(ptrOutFile, "%i ", NULLVAL);
         return iCountNohs;
     }
 
-    fprintf(ptrOut, "%i ", ptrRoot -> iData);
-    iCountNohs += writingComplete(ptrRoot -> ptrLeft, ptrOut);
-    iCountNohs += writingComplete(ptrRoot -> ptrRight, ptrOut);
+    fprintf(ptrOutFile, "%i ", ptrRoot -> iData);
+    iCountNohs += writingComplete(ptrRoot -> ptrLeft, ptrOutFile);
+    iCountNohs += writingComplete(ptrRoot -> ptrRight, ptrOutFile);
     return iCountNohs;
 }
 
-static int writeAuxiliar(Node *ptrRoot, FILE *out) {
-    if(!out || !ptrRoot) return 0;
-    fprintf(out, "%i ", ptrRoot -> iData);
-    return 1 + writeAuxiliar(ptrRoot -> ptrLeft, out) + writeAuxiliar(ptrRoot -> ptrRight, out);
+/**
+ * Dado o endereço da raiz, escreve os valores da arvore em um arquivo in order
+ * 
+ * @param ptrRoot endereço que guarda a raiz
+ * @param ptrOutFile ponteiro para o arquivo
+ * @return inteiro que indica a quantidade de elementos escritos
+ */
+static int writeAuxiliar(Node *ptrRoot, FILE *ptrOutFile) {
+    if(!ptrOutFile || !ptrRoot) return 0;
+    fprintf(ptrOutFile, "%i ", ptrRoot -> iData);
+    return 1 + writeAuxiliar(ptrRoot -> ptrLeft, ptrOutFile) + writeAuxiliar(ptrRoot -> ptrRight, ptrOutFile);
 }
 
-/*
-    FUNCAO PARA ESCREVER ARQUIVO (PRECISA DO NOME E DO FORMATO PARA ESCREVER, ALEM DA RAIZ)
-*/
-int writeFile(Node *root, const char *sFileName, int iFormat2Write){
-    FILE *out = fopen(sFileName, "w");
-    if(!out){
+/**
+ * Dado o endereço da raiz, escreve os valores da arvore em um arquivo in order
+ * 
+ * @param ptrRoot endereço que guarda a raiz
+ * @param sFileName nome do arquivo para ser aberto
+ * @param iFormat2Write inteiro que indica o formato de escrita, sendo 0(in order) ou 1(complete)
+ * @return inteiro que indica a quantidade de elementos escritos
+ */
+int writeFile(Node *ptrRoot, const char *sFileName, int iFormat2Write){
+    FILE *ptrOutFile = fopen(sFileName, "w");
+    if(!ptrOutFile){
         cout << "\e[1;41mError: nao foi possivel abrir o arquivo: [" << sFileName << "] para escrever tree.\e[0m\n";
         return -1; 
     }
     int iQtdWrited = -2;
     if(iFormat2Write == 0) 
-        iQtdWrited = writeAuxiliar(root, out);
+        iQtdWrited = writeAuxiliar(ptrRoot, ptrOutFile);
     else
-        iQtdWrited = writingComplete(root, out);
+        iQtdWrited = writingComplete(ptrRoot, ptrOutFile);
 
-    fclose(out);
+    fclose(ptrOutFile);
     return iQtdWrited;
 }
 
-/*
-    FUNCAO AUXILIAR PARA LER ARQUIVO
-*/
-Node *readingComplete(Node *root, FILE *inp) {
+/**
+ * Lê arquivo no modo completo
+ * 
+ * @param ptrRoot endereço que guarda determinado noh de uma arvore
+ * @param ptrInpFile ponteiro para o arquivo sendo lido
+ * @return noh gerado da arvore
+ */
+Node *readingComplete(Node *ptrRoot, FILE *ptrInpFile) {
     int iNumberAtual;
-    if(fscanf(inp, "%i ", &iNumberAtual) < 1 || iNumberAtual == NULLVAL) return nullptr;
-    root = createNode(iNumberAtual);
-    root -> ptrLeft = readingComplete(root -> ptrLeft, inp);
-    root -> ptrRight = readingComplete(root -> ptrLeft, inp);
-    return root;
+    if(fscanf(ptrInpFile, "%i ", &iNumberAtual) < 1 || iNumberAtual == NULLVAL) return nullptr;
+    ptrRoot = createNode(iNumberAtual);
+    ptrRoot -> ptrLeft = readingComplete(ptrRoot -> ptrLeft, ptrInpFile);
+    ptrRoot -> ptrRight = readingComplete(ptrRoot -> ptrLeft, ptrInpFile);
+    return ptrRoot;
 }
 
-/*
-    FUNCAO PARA LER ARQUIVO E DEVOLVER ARVORE
-*/
+/**
+ * Lê arquivo e retornar uma arvore
+ * 
+ * @param sFileName nome do arquivo a ser lido
+ * @param iFormat2Read forma de ler o arquivo, 0(in order) ou 1(complete)
+ * @return root de uma nova arvore
+ */
 Node *openFile(const char *sFileName, int iFormat2Read) {
-    FILE *inp = fopen(sFileName, "r");
-    if(!inp){
+    FILE *ptrInpFile = fopen(sFileName, "r");
+    if(!ptrInpFile){
         cout << "\e[1;41mError: nao foi possivel abrir o arquivo: [" << sFileName << "] para ler tree.\e[0m\n\n";
         return nullptr;
     }
-    Node *root = nullptr;
+    Node *ptrNewRoot = nullptr;
     int iNumberAtual;
 
     switch(iFormat2Read) {
         case 0:
-            while(fscanf(inp, "%i ", &iNumberAtual) > 0) {
+            while(fscanf(ptrInpFile, "%i ", &iNumberAtual) > 0) {
                 if(iNumberAtual == NULLVAL) continue;
-                insertNode(&root, iNumberAtual);
+                insertNode(&ptrNewRoot, iNumberAtual);
             }
             break;
         case 1:
-            root = readingComplete(root, inp);
+            ptrNewRoot = readingComplete(ptrNewRoot, ptrInpFile);
             break;
         default:
             break;
     }
-    cout << "\n\e[1;42mArvore carregada, raiz em :" << root << "  \e[0m" << endl << endl;
-    fclose(inp);
-    return root;
+    cout << "\n\e[1;42mArvore carregada, raiz em :" << ptrNewRoot << "  \e[0m" << endl << endl;
+    fclose(ptrInpFile);
+    return ptrNewRoot;
 }
 
 // Função que converte uma árvore para lista duplamente encadeada
-void convertToLL(Node* root, Node** head, Node** tail) {
-    if (root == nullptr) {
+void convertToLL(Node* ptrRoot, Node** ptrHead, Node** ptrTail) {
+    if (ptrRoot == nullptr) {
         return;
     }
 
     // Converter a subárvore esquerda em uma lista duplamente encadeada
-    convertToLL(root->ptrLeft, head, tail);
+    convertToLL(ptrRoot->ptrLeft, ptrHead, ptrTail);
 
     // Conectar a raiz à lista duplamente encadeada
-    if (*head == nullptr) {
-        *head = root;
+    if (*ptrHead == nullptr) {
+        *ptrHead = ptrRoot;
     } else {
-        (*tail)->ptrRight = root;
-        root->ptrLeft = *tail;
+        (*ptrTail)->ptrRight = ptrRoot;
+        ptrRoot->ptrLeft = *ptrTail;
     }
 
-    *tail = root;
+    *ptrTail = ptrRoot;
 
     // Converter a subárvore direita em uma lista duplamente encadeada
-    convertToLL(root->ptrRight, head, tail);
+    convertToLL(ptrRoot->ptrRight, ptrHead, ptrTail);
 }
 // A função convertToLL é usada para realizar a conversão da árvore para a lista duplamente encadeada
 // A função recebe três argumentos: o ponteiro para a raiz da árvore (root), o ponteiro para o 
@@ -305,7 +340,6 @@ void convertToLL(Node* root, Node** head, Node** tail) {
 
 
 // FUNÇÕES INCREMENTADAS PARA ORDENAÇÃO DE LISTA ENCADEADA DUPLA:
-
 Node *troca(Node *ptrInicio, Node *ptrItem1, Node *ptrItem2){
     Node *ptrAux;
     // ptrInicio = ptrItem2;
@@ -556,6 +590,7 @@ int remove_final(Node **ptrRoot, int iValor){
         else ptrAtual = ptrAtual->ptrLeft;
     }
 }
+
 /**
  * Desenha o menu principal
  * 
@@ -915,5 +950,3 @@ int drawMenuVisualization() {
         else if(controle == 0) return 0;
     }
 }
-
-

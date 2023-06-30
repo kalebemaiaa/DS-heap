@@ -1,16 +1,5 @@
 #include "auxiliar_functions.hpp"
 
-/*
-    ITEM 2
-    ITEM 8
-    ITEM 11 - 17
-    MAIORES PROBLEMAS:
-    -> PRINTAR NA VERTICAL
-    -> FAZER UM MENU LEGAL E EFICIENTE COM INTERAÇÃO
-    -> FAZER FILA DEVE SER UTIL PARA VERIFICAR SE E PERFEITA E PRINTAR NA VERTICAL
-        POIS TEREMOS A QTD DE NOH.
-*/
-
 int main() {
     int controle = 1;
     while(controle){
