@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <cmath>
 #include <chrono>
+#include <vector>
 
 #define NULLVAL -666
 
@@ -66,6 +67,19 @@ void insertNode(Node **ptrRoot, int iValue) {
         return;
     } 
     else insertNode(&((*ptrRoot) -> ptrRight), iValue);
+}
+
+/**
+ * Dado um endereço, acha a altura da arvore
+ * 
+ * @param ptrRoot endereço de um noh que guarda a raiz
+ * @return inteiro que representa a atlura da arvore
+ */
+int getHeight(Node *ptrRoot) {
+    if(!ptrRoot) return 0;
+    int iHeightLft = getHeight(ptrRoot -> ptrLeft), iHeightRgt = getHeight(ptrRoot -> ptrRight);
+    
+    return (iHeightLft > iHeightRgt) ? iHeightLft + 1 : iHeightRgt + 1;
 }
 
 /**
@@ -151,19 +165,6 @@ void printTreeHorizontal(Node *ptrRoot, int iTabulation, bool bollOrderControle)
 int getSize(Node *ptrRoot) {
     if(!ptrRoot) return 0;
     return getSize(ptrRoot -> ptrLeft) + getSize(ptrRoot -> ptrRight) + 1;
-}
-
-/**
- * Dado um endereço, acha a altura da arvore
- * 
- * @param ptrRoot endereço de um noh que guarda a raiz
- * @return inteiro que representa a atlura da arvore
- */
-int getHeight(Node *ptrRoot) {
-    if(!ptrRoot) return 0;
-    int iHeightLft = getHeight(ptrRoot -> ptrLeft), iHeightRgt = getHeight(ptrRoot -> ptrRight);
-    
-    return (iHeightLft > iHeightRgt) ? iHeightLft + 1 : iHeightRgt + 1;
 }
 
 /**
@@ -691,7 +692,7 @@ void quickSort(Node *head) {
     _quickSort(head, h);
 }
 
-
+/*
 // Radixsort 
 
 // Função de contagem utilizada no Radix Sort
@@ -856,7 +857,6 @@ void bucketSort(vector<float>& arr) {
     }
 }
 
-
 // Função para converter um vetor em uma lista duplamente ligada
 Node* arrayToList(vector<int>& arr) {
     
@@ -892,7 +892,7 @@ Node* arrayToList(vector<int>& arr) {
 }
 // Por isso na main tem q estar 'vector<int> arr = {170, 45, 75, 90, 802, 24, 2, 66};' ( um exemplo ) 
 // Mas apenas na Radix, Heap. Couting, Bucket 
-
+*/
 // FUNÇÕES PARA REMOVER NO DE ACORDO COM O VALOR INTEIRO SOLICITADO
 Node* remove(Node *ptrAtual){
     Node *ptrNo1, *ptrNo2;
@@ -1279,7 +1279,18 @@ int drawMenuVisualization() {
         system("cls || clear");
         if(controle > 4 || controle < 0) continue;
         if(controle == 1){
-
+            cout << "--vertical root meio--\n\n";
+            auto start = chrono::steady_clock::now();
+            TreePrinter(ptrAllTree[iChooseTree - 1]);
+            getTimeLapse(start);
+            int iGetInput;
+            do{
+                cout << " - Voltar no menu anterior: \tDIGITE 1" << endl;
+                cout << " - Sair do programa: \t\tDIGITE 0" << endl;
+                iGetInput = get_int();
+                system("cls || clear");
+            }while(iGetInput > 1 || iGetInput < 0);
+            if(iGetInput == 0) return 0;
         }
         if(controle == 2) {
             cout << "--vertical in order--\n\n";
