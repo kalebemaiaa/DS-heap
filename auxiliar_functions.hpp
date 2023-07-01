@@ -360,6 +360,8 @@ Node* flattenTree(Node* root) {
 
 
 // FUNÇÕES INCREMENTADAS PARA ORDENAÇÃO DE LISTA ENCADEADA DUPLA:
+
+//FUNÇÃO PARA TROCAR ELEMENTOS
 Node *troca(Node *ptrInicio, Node *ptrItem1, Node *ptrItem2){
     Node *ptrAux;
     // ptrInicio = ptrItem2;
@@ -423,6 +425,15 @@ Node* b_sort(Node **ptrItem1){
     return ptrInicio;
 };
 
+Node* bb_sort(Node *ptrRoot){
+    Node *ptrHead = nullptr;
+    Node *ptrTail = nullptr;
+    convertToLL(ptrRoot, &ptrHead, &ptrTail);
+    b_sort(&ptrHead);
+    return ptrHead;
+}
+
+//FUNÇÃO PARA POSICIONAR ELEMENTO DE ACORDO COM IDATA
 void posiciona(Node **ptrInicio, Node *ptrItem){
     Node *ptrAux = ptrItem;
     int dat = ptrItem->iData;
@@ -472,6 +483,14 @@ void i_sort(Node **ptrInicio){
     }
 };
 
+Node* ii_sort(Node *ptrRoot){
+    Node *ptrHead = nullptr;
+    Node *ptrTail = nullptr;
+    convertToLL(ptrRoot, &ptrHead, &ptrTail);
+    i_sort(&ptrHead);
+    return ptrHead;
+}
+
 int tamanho(Node *ptrInicio){
     int iCont = 0;
     while(ptrInicio != nullptr){
@@ -510,7 +529,7 @@ void shell_sort(Node **ptrInicio){
         ptrDivide_lista = ptrTmp;
         ptrAux = ptrTmp2;
     }
-
+    if(itamanho <= 3) return i_sort(ptrInicio);
     i = 0;
     ptrAux = *ptrInicio;
 
@@ -543,6 +562,14 @@ void shell_sort(Node **ptrInicio){
     i_sort(ptrInicio);
 
 };
+Node* sshell_sort(Node *ptrRoot){
+    Node *ptrHead = nullptr;
+    Node *ptrTail = nullptr;
+    convertToLL(ptrRoot, &ptrHead, &ptrTail);
+    shell_sort(&ptrHead);
+    return ptrHead;
+};
+
 
 void s_sort_ptrAux(Node **ptrInicio){
     Node *ptrAux = *ptrInicio, *ptrMenor = *ptrInicio;
@@ -564,6 +591,38 @@ void s_sort(Node **ptrInicio){
         ptrAux2 = ptrAux->ptrRight;
         s_sort_ptrAux(&ptrAux);
         ptrAux = ptrAux2;
+    }
+};
+Node* ss_sort(Node *ptrRoot){
+    Node *ptrHead = nullptr;
+    Node *ptrTail = nullptr;
+    convertToLL(ptrRoot, &ptrHead, &ptrTail);
+    s_sort(&ptrHead);
+    return ptrHead;
+};
+
+//FUNÇÕES PARA PRINTAR LINKED LIST
+void printList(Node *ptrHead) {
+    Node *ptrCurrent = ptrHead;
+    while (ptrCurrent != nullptr) {
+        std::cout << ptrCurrent->iData << " "  ;
+        ptrCurrent = ptrCurrent->ptrRight;
+    }
+    std::cout << std::endl;
+};
+
+Node *ultimo(Node *ptrInicio){
+    Node *ptrAux = ptrInicio;
+    while(ptrAux->ptrRight != nullptr){
+        ptrAux = ptrAux->ptrRight;
+    }
+    return ptrAux;
+}
+
+void printReverso(Node *ptrInicio){
+    while(ptrInicio != nullptr){
+        cout << ptrInicio->iData << " ";
+        ptrInicio = ptrInicio->ptrRight;
     }
 };
 
