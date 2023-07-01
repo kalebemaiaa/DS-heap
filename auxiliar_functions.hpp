@@ -15,17 +15,11 @@ typedef struct Node {
 Node **ptrAllTree;
 int iTreeCount = 0;
 
-double measure_execution_time() {
-    chrono::high_resolution_clock::time_point start_time = chrono::high_resolution_clock::now();
+void getTimeLapse(auto start) {
+    auto end = chrono::steady_clock::now();
 
-    // CHAMAR A FUNCAO QUE QUERO MEDIR AQUI
-    //funcao();  // Chama a função que você deseja medir
-
-    chrono::high_resolution_clock::time_point end_time = chrono::high_resolution_clock::now();
-
-    chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(end_time - start_time);
-
-   return time_span.count();
+    auto diff = end - start;
+    cout << "\n\e[1;42mTempo de execucao:  "<<  chrono::duration <double, milli> (diff).count() << " ms\e[0m" << endl;
 }
 
 /**
@@ -307,7 +301,7 @@ Node *openFile(const char *sFileName, int iFormat2Read) {
         default:
             break;
     }
-    cout << "\n\e[1;42mArvore carregada, raiz em :" << ptrNewRoot << "  \e[0m" << endl << endl;
+    cout << "\n\e[1;42mArvore carregada, raiz em :" << ptrNewRoot;
     fclose(ptrInpFile);
     return ptrNewRoot;
 }
@@ -624,6 +618,7 @@ int drawMenuInsert() {
         system("cls || clear");
         
         if(controle == 1){
+            auto start = chrono::steady_clock::now();
             string sFileName;
             cout << "Digite o nome do arquivo: ";
             cin >> sFileName;
@@ -641,14 +636,14 @@ int drawMenuInsert() {
                 
                 system("cls || clear");
             }
-
             Node *ptrNewRoot = openFile(sFileName.c_str(), iReadModo);
             if(!ptrNewRoot) continue;
-
             ptrAllTree =(Node **) realloc(ptrAllTree, ++iTreeCount);
             *(ptrAllTree + iTreeCount - 1) = ptrNewRoot;
+            getTimeLapse(start);
         }
         else if(controle == 2) {
+            auto start = chrono::steady_clock::now();
             Node *ptrNewRoot = nullptr;
             int iGetInput;
             while(true){
@@ -670,7 +665,8 @@ int drawMenuInsert() {
 
             ptrAllTree = (Node **) realloc(ptrAllTree, ++iTreeCount);
             *(ptrAllTree + iTreeCount - 1) = ptrNewRoot;
-            cout << "\n\e[1;42mArvore carregada, raiz em :" << ptrNewRoot << "  \e[0m" << endl << endl;
+            cout << "\n\e[1;42mArvore carregada, raiz em :" << ptrNewRoot;
+            getTimeLapse(start);
         }
         if(controle == 3) break;
         if(controle == 0) return 0;
@@ -744,28 +740,39 @@ int drawMenuShow() {
             continue;
         }
         if(controle == 1) {
+            auto start = chrono::steady_clock::now();
             cout << "A altura da arvore e: " << getHeight(ptrAllTree[iChooseTree - 1]) << endl;
+            getTimeLapse(start);
         }
         else if(controle == 2) {
+            auto start = chrono::steady_clock::now();
             cout << "O tamanho da arvore e: " << getSize(ptrAllTree[iChooseTree - 1]) << endl;
+            getTimeLapse(start);
         }
         else if(controle == 3) {
+            auto start = chrono::steady_clock::now();
             int iValue2Search;
             cout << "Digite um valor para ser procurado:  ";
             iValue2Search = get_int();
             system("cls || clear");
+            
             Node *ptrValue = searchValue(ptrAllTree[iChooseTree - 1], iValue2Search);
 
             if(!ptrValue) 
                 cout << "O valor que voce procurava nao foi encontrado." << endl;
             else
                 cout << "O valor que voce procurava esta em: " << ptrValue << endl;
+            getTimeLapse(start);
         }
         else if(controle == 4) {
+            auto start = chrono::steady_clock::now();
             isComplete(ptrAllTree[iChooseTree - 1]) ? cout << "A arvore e completa" << endl : cout << "A arvore e incompleta" << endl;
+            getTimeLapse(start);
         }
         else if(controle == 5) {
+            auto start = chrono::steady_clock::now();
             isPerfect(ptrAllTree[iChooseTree - 1]) ? cout << "A arvore e perfeita" << endl : cout << "A arvore e imperfeita" << endl;
+            getTimeLapse(start);
         }
         else if(controle == 6) {
             cout << "\n\t \e[1;43mArvore " << iChooseTree << "\e[0m" << endl;
@@ -828,6 +835,8 @@ int drawMenuChange() {
         if(controle > 4 || controle < 0) continue;
         if(controle == 1) {
             int iGetInput;
+            
+            auto start = chrono::steady_clock::now();
             while(true){
                 printTreeHorizontal(ptrAllTree[iChooseTree - 1], 0, 1);
                 cout << "\nDigite um numero para inserir na arvore:  ";
@@ -844,6 +853,7 @@ int drawMenuChange() {
                 }while(controle != 'N' && controle != 'Y');
                 if(controle == 'N') break;
             }
+            getTimeLapse(start);
         }
         else if(controle == 2) {
             cout << "Erique's working hard" << endl;
@@ -852,6 +862,7 @@ int drawMenuChange() {
             string sFileName;
             cout << "Digite o nome do arquivo: ";
             cin >> sFileName;
+            
             if(!verifyExtensao(sFileName.c_str())){
                 cout << "\e[1;41mError: O arquivo [" << sFileName << "] nao possui a estensao [.txt].\e[0m\n\n";
                 continue;
@@ -866,8 +877,10 @@ int drawMenuChange() {
                 
                 system("cls || clear");
             }while(iWriteModo > 1 || iWriteModo < 0);
+            auto start = chrono::steady_clock::now();
             int iQtdWrited = writeFile(ptrAllTree[iChooseTree - 1], sFileName.c_str(), iWriteModo);
             cout << iQtdWrited << " nohs foram escritos no arquivo [" << sFileName << "] no modo " << iWriteModo << endl;
+            getTimeLapse(start);
         }   
         else if(controle == 4) return 1;
         else if(controle == 5) { 
@@ -913,10 +926,14 @@ int drawMenuVisualization() {
         controle = get_int();
         system("cls || clear");
         if(controle > 4 || controle < 0) continue;
+        if(controle == 1){
 
+        }
         if(controle == 2) {
             cout << "--vertical in order--\n\n";
+            auto start = chrono::steady_clock::now();
             printTreeHorizontal(ptrAllTree[iChooseTree - 1], 0, 0);
+            getTimeLapse(start);
             int iGetInput;
             do{
                 cout << " - Voltar no menu anterior: \tDIGITE 1" << endl;
@@ -928,7 +945,9 @@ int drawMenuVisualization() {
         }
         if(controle == 3) {
             cout << "--horizontal com raiz no meio--\n\n";
+            auto start = chrono::steady_clock::now();
             printTreeHorizontal(ptrAllTree[iChooseTree - 1], 0, 1);
+            getTimeLapse(start);
             int iGetInput;
             do{
                 cout << " - Voltar no menu anterior: \tDIGITE 1" << endl;
@@ -939,10 +958,6 @@ int drawMenuVisualization() {
             }while(iGetInput > 1 || iGetInput < 0);
             if(iGetInput == 0) return 0;
         }
-        else if(controle == 2) {
-            cout << "Erique's working hard" << endl;
-        }
-        else if(controle == 3) return 1;
         else if(controle == 4) { 
             iChooseTree = chooseTree();
             continue;
