@@ -16,11 +16,23 @@ typedef struct Node {
 Node **ptrAllTree;
 int iTreeCount = 0;
 
+Node **ptrAllLinkedList;
+int iListCount = 0;
+
 void getTimeLapse(auto start) {
     auto end = chrono::steady_clock::now();
 
     auto diff = end - start;
     cout << "\n\e[1;42mTempo de execucao:  "<<  chrono::duration <double, milli> (diff).count() << " ms\e[0m" << endl;
+}
+
+void printLinkedList(Node *ptrHead) {
+    if(!ptrHead) {
+        cout << "end" <<  endl;
+        return ;
+    }
+    cout << ptrHead -> iData << " -> ";
+    printLinkedList(ptrHead -> ptrRight);
 }
 
 /**
@@ -38,16 +50,18 @@ Node *createNode(int iValue) {
 }
 
 /**
- * Deleta determinado noh
+ * Deleta determinada arvore
  * 
- * @param ptrNoh endereco do noh a ser deletado
- * @return interio que o noh armazenava
+ * @param ptrNoh endereco da raiz da arvore
+ * @return quantidade de nohs deletados
  */
-int deleteNode(Node *ptrNoh) {
-    if(!ptrNoh) return NULLVAL;
-    int iAux = ptrNoh -> iData;
+int deleteTree(Node *ptrNoh) {
+    if(!ptrNoh) return  0;
+    int iQtdNoh = 0;
+    iQtdNoh += deleteTree(ptrNoh -> ptrLeft);
+    iQtdNoh += deleteTree(ptrNoh -> ptrRight);
     free(ptrNoh);
-    return iAux;
+    return iQtdNoh + 1;
 }
 
 /**
@@ -182,22 +196,30 @@ Node *searchValue(Node *ptrRoot, int iValue) {
     return searchValue(ptrRoot -> ptrRight, iValue);
 }
 
-
-bool isPerfect(Node *ptrRoot) {
-    return true;
-}
-
 /**
  * Dado o endereço da raiz, diz se a arvore é completa
  * 
  * @param ptrRoot endereço que guarda a raiz
- * @return booleano que indica se é ou nao perfeita
+ * @return booleano que indica se é ou nao completa
  */
 bool isComplete(Node *ptrRoot) {
     if(!ptrRoot) return true;
     if((!(ptrRoot -> ptrLeft) && (ptrRoot -> ptrRight)) || (ptrRoot -> ptrLeft) && !(ptrRoot -> ptrRight)) return false;
     if(!isComplete(ptrRoot -> ptrLeft) || !isComplete(ptrRoot -> ptrRight)) return false;
     return true;
+}
+
+/**
+ * Dado o endereço da raiz, diz se a arvore é perfeita
+ * 
+ * @param ptrRoot endereço que guarda a raiz
+ * @return booleano que indica se é ou nao perfeita
+ */
+bool isPerfect(Node *ptrRoot){
+    if(!ptrRoot) return 0;
+    int iHeightLft = getHeight(ptrRoot -> ptrLeft), iHeightRgt = getHeight(ptrRoot -> ptrRight);
+    bool bTestComplete = isComplete(ptrRoot);
+    return (iHeightLft == iHeightRgt && bTestComplete) ? true : false;
 }
 
 /**
@@ -1303,7 +1325,7 @@ int drawMenuChange() {
 }
 
 /**
- * Desenha o menu para alterar uma arvore
+ * Desenha o menu para visualizr uma arvore
  * 
  * @return inteiro usado para controle entre menu principal e sair do programa
  */
@@ -1332,11 +1354,12 @@ int drawMenuVisualization() {
         cout << "- Ver na vertical in order: \t\tDIGITE 2" << endl;
         cout << "- Ver na horizontal com raiz no meio: \tDIGITE 3" << endl;
         cout << "- Deseja trocar a arvore: \t\tDIGITE 4" << endl;
+        cout << "- Voltar para o menu anterior: \t\tDIGITE 5" << endl;
         cout << "- Sair do programa: \t\t\tDIGITE 0" << endl;
         cout << "\nDIGITE UM NUMERO: ";
         controle = get_int();
         system("cls || clear");
-        if(controle > 4 || controle < 0) continue;
+        if(controle > 5 || controle < 0) continue;
         if(controle == 1){
             cout << "--vertical root meio--\n\n";
             auto start = chrono::steady_clock::now();
@@ -1384,6 +1407,111 @@ int drawMenuVisualization() {
             iChooseTree = chooseTree();
             continue;
         }
+        else if(controle == 5) return 1;
+        else if(controle == 0) return 0;
+    }
+}
+
+/**
+ * Desenha o menu para alterar uma arvore
+ * 
+ * @return inteiro usado para controle entre menu principal e sair do programa
+ */
+int drawMenuOrdenacao() {
+    system("cls || clear");
+    
+    if(iTreeCount == 0) {
+        cout << "\n\e[1;41mTemos atualmente -> " << iTreeCount << " <- arvores carregadas. ";
+        cout << "Por favor, volte ao menu anterior e insira alguma arvore.\e[0m\n" << endl;
+        return 1;
+    }
+
+    while(1){
+        int controle;   
+        cout << "\t\t \e[1;45m- MENU ORDENACAO- \e[0m\n" << endl;
+        cout << "- Converter arvore em linked list: \tDIGITE 1" << endl;
+        cout << "- Ordenar lista: \t\t\tDIGITE 2" << endl;
+        cout << "- Voltar ao menu anterior: \t\tDIGITE 3" << endl;
+        cout << "- Sair do programa: \t\t\tDIGITE 0" << endl;
+        cout << "\nDIGITE UM NUMERO: ";
+        controle = get_int();
+        system("cls || clear");
+        if(controle == 1){
+            auto start = chrono::steady_clock::now();
+            Node *ptrHead = nullptr;
+            Node *ptrTail = nullptr;
+            for(int i = 0; i < iTreeCount; i++) {
+                cout << "\n\t \e[1;43mArvore " << i + 1 << "\e[0m" << endl;
+                printTreeHorizontal(ptrAllTree[i], 0, 0);
+                cout << endl;
+            }
+            int iChooseTree = chooseTree();
+            convertToLL(ptrAllTree[iChooseTree - 1], &ptrHead, &ptrTail);
+            ptrAllTree[iChooseTree - 1] = nullptr;
+            ptrAllLinkedList =(Node **) realloc(ptrAllLinkedList, ++iListCount);
+            *(ptrAllLinkedList + iListCount - 1) = ptrHead;
+            cout << "Linked list salva em: " << ptrHead << endl;
+            getTimeLapse(start);
+        }
+        else if(controle == 2) {
+            if(iListCount == 0) {
+                cout << "\n\e[1;41mTemos atualmente -> " << iListCount << " <- linked list carregadas. ";
+                cout << "Por favor, volte ao menu anterior e converta uma arvore em linked list.\e[0m\n" << endl;
+                continue;
+            }
+
+            for(int i = 0; i < iListCount; i++) {
+                cout << "\n\t \e[1;43mLinked list " << i + 1 << "\e[0m" << endl;
+                printLinkedList(ptrAllLinkedList[i]);
+            }
+            int iChooseList;
+            do{
+                cout << "\nCom qual lista deseja trabalhar? { ";
+                for(int i = 0; i < iListCount; i++) cout << i+1 << " ";
+                cout << "}\nDIGITE: ";
+                iChooseList = get_int();
+                system("cls || clear");
+            }while(iChooseList < 1 || iChooseList > iListCount);
+
+            while(1) {
+                int iGetInput;
+                cout << "Escolha metodo de ordenacao: " << endl;
+                cout << "1 -> selection sort" << endl;
+                cout << "2 -> bubble sort" << endl;
+                cout << "3 -> insertion sort" << endl;
+                cout << "4 -> shell sort" << endl;
+                cout << "5 -> merge sort" << endl;
+                cout << "0 -> sair do programa" << endl;
+                iGetInput = get_int();
+                if(iGetInput == 1) {
+                    auto start = chrono::steady_clock::now();
+                    s_sort(&(ptrAllLinkedList[iChooseList - 1]));
+                    getTimeLapse(start);
+                }
+                else if(iGetInput == 2) {
+                    auto start = chrono::steady_clock::now();
+                    ptrAllLinkedList[iChooseList - 1] = b_sort(&(ptrAllLinkedList[iChooseList - 1]));
+                    getTimeLapse(start);
+                }
+                else if(iGetInput == 3) {
+                    auto start = chrono::steady_clock::now();
+                    i_sort(&(ptrAllLinkedList[iChooseList - 1]));
+                    getTimeLapse(start);
+                }
+                else if(iGetInput == 4) {
+                    auto start = chrono::steady_clock::now();
+                    shell_sort(&(ptrAllLinkedList[iChooseList - 1]));
+                    getTimeLapse(start);
+                }
+                else if(iGetInput == 5) {
+                    auto start = chrono::steady_clock::now();
+                    ptrAllLinkedList[iChooseList - 1] = mergeSort(ptrAllLinkedList[iChooseList - 1]);
+                    getTimeLapse(start);
+                }
+                else if(iGetInput == 0) return 0;
+            }
+        }
+        else if(controle == 3) return 1;
         else if(controle == 0) return 0;
     }
 }

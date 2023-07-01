@@ -14,6 +14,7 @@ int main() {
         else if(controle == 3) controle = drawMenuShow();
         else if(controle == 4) controle = drawMenuChange();
         else if(controle == 5) controle = drawMenuVisualization();
+        else if(controle == 6) controle = drawMenuOrdenacao();
     };
     return 0;
 }
