@@ -568,10 +568,200 @@ void s_sort(Node **ptrInicio){
 };
 
 
+// Sorts extras 
+
+// Merge 
+
+Node* split(Node* head) {
+    Node *fast = head, *slow = head;
+    while (fast->ptrNext && fast->ptrNext->ptrNext) {
+        fast = fast->ptrNext->ptrNext;
+        slow = slow->ptrNext;
+    }
+    Node* temp = slow->ptrNext;
+    slow->ptrNext = nullptr;
+    return temp;
+}
+
+Node* merge(Node* first, Node* second) {
+    if (!first)
+        return second;
+
+    if (!second)
+        return first;
+
+    if (first->iData < second->iData) {
+        first->ptrNext = merge(first->ptrNext, second);
+        first->ptrNext->ptrPrev = first;
+        first->ptrPrev = nullptr;
+        return first;
+    } else {
+        second->ptrNext = merge(first, second->ptrNext);
+        second->ptrNext->ptrPrev = second;
+        second->ptrPrev = nullptr;
+        return second;
+    }
+}
+
+Node* mergeSort(Node* node) {
+    if (!node || !node->ptrNext)
+        return node;
+    Node* second = split(node);
+
+    node = mergeSort(node);
+    second = mergeSort(second);
+
+    return merge(node, second);
+}
+
+// Quicksort 
+
+void swap(int* a, int* b) {
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+Node *lastNode(Node *root) {
+    while (root && root->ptrNext)
+        root = root->ptrNext;
+    return root;
+}
+
+Node* partition(Node *l, Node *h) {
+    int x  = h->iData;
+    Node *i = l->ptrPrev;
+
+    for (Node *j = l; j != h; j = j->ptrNext) {
+        if (j->iData <= x) {
+            i = (i == nullptr)? l : i->ptrNext;
+            swap(&(i->iData), &(j->iData));
+        }
+    }
+    i = (i == nullptr)? l : i->ptrNext;
+    swap(&(i->iData), &(h->iData));
+    return i;
+}
+
+void _quickSort(Node* l, Node *h) {
+    if (h != nullptr && l != h && l != h->ptrNext) {
+        Node *p = partition(l, h);
+        _quickSort(l, p->ptrPrev);
+        _quickSort(p->ptrNext, h);
+    }
+}
+
+void quickSort(Node *head) {
+    Node *h = lastNode(head);
+    _quickSort(head, h);
+}
 
 
+// Radixsort 
 
+void countSort(vector<int>& arr, int exp) {
+    int n = arr.size();
+    vector<int> output(n);
+    vector<int> count(10, 0);
+    
+    for (int i = 0; i < n; i++)
+        count[(arr[i] / exp) % 10]++;
+    
+    for (int i = 1; i < 10; i++)
+        count[i] += count[i - 1];
+    
+    for (int i = n - 1; i >= 0; i--) {
+        output[count[(arr[i] / exp) % 10] - 1] = arr[i];
+        count[(arr[i] / exp) % 10]--;
+    }
+    
+    for (int i = 0; i < n; i++)
+        arr[i] = output[i];
+}
 
+void radixSort(vector<int>& arr) {
+    int max = *max_element(arr.begin(), arr.end());
+    
+    for (int exp = 1; max / exp > 0; exp *= 10)
+        countSort(arr, exp);
+}
+
+// Heapsort 
+
+void heapify(vector<int>& arr, int n, int i) {
+    int largest = i; 
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+  
+    if (left < n && arr[left] > arr[largest])
+        largest = left;
+  
+    if (right < n && arr[right] > arr[largest])
+        largest = right;
+  
+    if (largest != i) {
+        swap(arr[i], arr[largest]);
+        heapify(arr, n, largest);
+    }
+}
+
+void heapSort(vector<int>& arr) {
+    int n = arr.size();
+  
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i);
+  
+    for (int i = n - 1; i > 0; i--) {
+        swap(arr[0], arr[i]);
+        heapify(arr, i, 0);
+    }
+}
+
+// Coutingsort 
+
+void countSort(vector<int>& arr) {
+    int max = *max_element(arr.begin(), arr.end());
+    int min = *min_element(arr.begin(), arr.end());
+    int range = max - min + 1;
+  
+    vector<int> count(range), output(arr.size());
+    for(int i = 0; i < arr.size(); i++)
+        count[arr[i]-min]++;
+    
+    for(int i = 1; i < count.size(); i++)
+        count[i] += count[i-1];
+    
+    for(int i = arr.size()-1; i >= 0; i--) {
+        output[count[arr[i]-min]-1] = arr[i];
+        count[arr[i]-min]--;
+    }
+    
+    for(int i = 0; i < arr.size(); i++)
+        arr[i] = output[i];
+}
+
+// BucketSort
+
+void bucketSort(vector<float>& arr) {
+    int n = arr.size();
+    vector<list<float>> buckets(n);
+
+    for (int i = 0; i < n; i++) {
+        int bucketIndex = n * arr[i];
+        buckets[bucketIndex].push_back(arr[i]);
+    }
+
+    for (int i = 0; i < n; i++) 
+        buckets[i].sort();
+    
+    int index = 0;
+    for (int i = 0; i < n; i++) {
+        while (!buckets[i].empty()) {
+            arr[index++] = *(buckets[i].begin());
+            buckets[i].erase(buckets[i].begin());
+        }
+    }
+}
 
 
 
