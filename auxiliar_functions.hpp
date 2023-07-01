@@ -355,35 +355,6 @@ void convertToLL(Node* ptrRoot, Node** ptrHead, Node** ptrTail) {
 // A função recebe três argumentos: o ponteiro para a raiz da árvore (root), o ponteiro para o 
 // ponteiro para a cabeça da lista (head), e o ponteiro para o ponteiro para o final da lista (tail).
 
-// Função para converter uma árvore binária em uma lista ligada
-void flatten(Node* root, Node*& ptrLeft) {
-    if (root == nullptr) return;
-
-    flatten(root->ptrLeft, ptrLeft);
-
-    if (ptrLeft != nullptr) {
-        ptrLeft->ptrRight = root; // antigo próximo nó é atual nó
-        root->ptrLeft = nullptr;  // limpa o ponteiro esquerdo
-    }
-    
-    ptrLeft = root;
-
-    flatten(root->ptrRight, ptrLeft);
-}
-
-// Função auxiliar para converter a árvore em uma lista ligada
-Node* flattenTree(Node* root) {
-    Node* ptrLeft = nullptr;
-    flatten(root, ptrLeft);
-    while (root && root->ptrLeft) {
-        root = root->ptrLeft;
-    }
-    return root;
-}
-
-
-// FUNÇÕES INCREMENTADAS PARA ORDENAÇÃO DE LISTA ENCADEADA DUPLA:
-
 //FUNÇÃO PARA TROCAR ELEMENTOS
 Node *troca(Node *ptrInicio, Node *ptrItem1, Node *ptrItem2){
     Node *ptrAux;
@@ -483,15 +454,6 @@ void posiciona(Node **ptrInicio, Node *ptrItem){
 
     else if(ptrItem->ptrRight == ptrAux){
         *ptrInicio = troca(*ptrInicio, ptrItem, ptrAux); 
-        // if(ptrItem->ptrLeft != nullptr) ptrItem->ptrLeft->ptrRight = ptrAux;
-        // else{
-        //     *ptrInicio = ptrAux;
-        // }
-        // if(ptrAux->ptrRight != nullptr) ptrAux->ptrRight->ptrLeft = ptrItem;
-        // ptrAux->ptrLeft = ptrItem->ptrLeft;
-        // ptrItem->ptrLeft = ptrAux;
-        // ptrItem->ptrRight = ptrAux->ptrRight;
-        // ptrAux->ptrRight = ptrItem;
     }
     
 };
@@ -1420,8 +1382,8 @@ int drawMenuVisualization() {
 int drawMenuOrdenacao() {
     system("cls || clear");
     
-    if(iTreeCount == 0) {
-        cout << "\n\e[1;41mTemos atualmente -> " << iTreeCount << " <- arvores carregadas. ";
+    if(iTreeCount == 0 && iListCount == 0) {
+        cout << "\n\e[1;41mTemos atualmente -> " << iTreeCount << " <- arvores e listas carregadas ";
         cout << "Por favor, volte ao menu anterior e insira alguma arvore.\e[0m\n" << endl;
         return 1;
     }
@@ -1452,6 +1414,7 @@ int drawMenuOrdenacao() {
             *(ptrAllLinkedList + iListCount - 1) = ptrHead;
             cout << "Linked list salva em: " << ptrHead << endl;
             getTimeLapse(start);
+            ptrAllTree =(Node **) realloc(ptrAllTree, --iTreeCount);
         }
         else if(controle == 2) {
             if(iListCount == 0) {
@@ -1487,26 +1450,31 @@ int drawMenuOrdenacao() {
                 if(iGetInput == 1) {
                     auto start = chrono::steady_clock::now();
                     s_sort(&(ptrAllLinkedList[iChooseList - 1]));
+                    printLinkedList(ptrAllLinkedList[iChooseList - 1]);
                     getTimeLapse(start);
                 }
                 else if(iGetInput == 2) {
                     auto start = chrono::steady_clock::now();
                     ptrAllLinkedList[iChooseList - 1] = b_sort(&(ptrAllLinkedList[iChooseList - 1]));
+                    printLinkedList(ptrAllLinkedList[iChooseList - 1]);
                     getTimeLapse(start);
                 }
                 else if(iGetInput == 3) {
                     auto start = chrono::steady_clock::now();
                     i_sort(&(ptrAllLinkedList[iChooseList - 1]));
+                    printLinkedList(ptrAllLinkedList[iChooseList - 1]);
                     getTimeLapse(start);
                 }
                 else if(iGetInput == 4) {
                     auto start = chrono::steady_clock::now();
                     shell_sort(&(ptrAllLinkedList[iChooseList - 1]));
+                    printLinkedList(ptrAllLinkedList[iChooseList - 1]);
                     getTimeLapse(start);
                 }
                 else if(iGetInput == 5) {
                     auto start = chrono::steady_clock::now();
                     ptrAllLinkedList[iChooseList - 1] = mergeSort(ptrAllLinkedList[iChooseList - 1]);
+                    printLinkedList(ptrAllLinkedList[iChooseList - 1]);
                     getTimeLapse(start);
                 }
                 else if(iGetInput == 6) break;
