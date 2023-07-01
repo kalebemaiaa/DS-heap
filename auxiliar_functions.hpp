@@ -332,6 +332,32 @@ void convertToLL(Node* ptrRoot, Node** ptrHead, Node** ptrTail) {
 // A função recebe três argumentos: o ponteiro para a raiz da árvore (root), o ponteiro para o 
 // ponteiro para a cabeça da lista (head), e o ponteiro para o ponteiro para o final da lista (tail).
 
+// Função para converter uma árvore binária em uma lista ligada
+void flatten(Node* root, Node*& ptrPrev) {
+    if (root == nullptr) return;
+
+    flatten(root->ptrLeft, ptrPrev);
+
+    if (ptrPrev != nullptr) {
+        ptrPrev->ptrRight = root; // antigo próximo nó é atual nó
+        root->ptrLeft = nullptr;  // limpa o ponteiro esquerdo
+    }
+    
+    ptrPrev = root;
+
+    flatten(root->ptrRight, ptrPrev);
+}
+
+// Função auxiliar para converter a árvore em uma lista ligada
+Node* flattenTree(Node* root) {
+    Node* ptrPrev = nullptr;
+    flatten(root, ptrPrev);
+    while (root && root->ptrLeft) {
+        root = root->ptrLeft;
+    }
+    return root;
+}
+
 
 // FUNÇÕES INCREMENTADAS PARA ORDENAÇÃO DE LISTA ENCADEADA DUPLA:
 Node *troca(Node *ptrInicio, Node *ptrItem1, Node *ptrItem2){
@@ -540,6 +566,14 @@ void s_sort(Node **ptrInicio){
         ptrAux = ptrAux2;
     }
 };
+
+
+
+
+
+
+
+
 
 // FUNÇÕES PARA REMOVER NO DE ACORDO COM O VALOR INTEIRO SOLICITADO
 Node* remove(Node *ptrAtual){
