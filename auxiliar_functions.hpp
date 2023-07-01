@@ -1481,6 +1481,7 @@ int drawMenuOrdenacao() {
                 cout << "3 -> insertion sort" << endl;
                 cout << "4 -> shell sort" << endl;
                 cout << "5 -> merge sort" << endl;
+                cout << "6 -> menu anterior" << endl;
                 cout << "0 -> sair do programa" << endl;
                 iGetInput = get_int();
                 if(iGetInput == 1) {
@@ -1508,7 +1509,12 @@ int drawMenuOrdenacao() {
                     ptrAllLinkedList[iChooseList - 1] = mergeSort(ptrAllLinkedList[iChooseList - 1]);
                     getTimeLapse(start);
                 }
+                else if(iGetInput == 6) break;
                 else if(iGetInput == 0) return 0;
+                cout << "Deseja continuar -> 1" << endl;
+                cout << "Encerrar programa -> 0" << endl;
+                int iContinue = get_int();
+                if(iContinue == 0) return 0;
             }
         }
         else if(controle == 3) return 1;
