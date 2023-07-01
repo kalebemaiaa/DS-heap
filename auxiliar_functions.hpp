@@ -1340,7 +1340,7 @@ int drawMenuVisualization() {
         if(controle == 1){
             cout << "--vertical root meio--\n\n";
             auto start = chrono::steady_clock::now();
-            TreePrinter(ptrAllTree[iChooseTree - 1]);
+            //TreePrinter(ptrAllTree[iChooseTree - 1]);
             getTimeLapse(start);
             int iGetInput;
             do{
