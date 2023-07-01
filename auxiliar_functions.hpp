@@ -333,25 +333,25 @@ void convertToLL(Node* ptrRoot, Node** ptrHead, Node** ptrTail) {
 // ponteiro para a cabeça da lista (head), e o ponteiro para o ponteiro para o final da lista (tail).
 
 // Função para converter uma árvore binária em uma lista ligada
-void flatten(Node* root, Node*& ptrPrev) {
+void flatten(Node* root, Node*& ptrLeft) {
     if (root == nullptr) return;
 
-    flatten(root->ptrLeft, ptrPrev);
+    flatten(root->ptrLeft, ptrLeft);
 
-    if (ptrPrev != nullptr) {
-        ptrPrev->ptrRight = root; // antigo próximo nó é atual nó
+    if (ptrLeft != nullptr) {
+        ptrLeft->ptrRight = root; // antigo próximo nó é atual nó
         root->ptrLeft = nullptr;  // limpa o ponteiro esquerdo
     }
     
-    ptrPrev = root;
+    ptrLeft = root;
 
-    flatten(root->ptrRight, ptrPrev);
+    flatten(root->ptrRight, ptrLeft);
 }
 
 // Função auxiliar para converter a árvore em uma lista ligada
 Node* flattenTree(Node* root) {
-    Node* ptrPrev = nullptr;
-    flatten(root, ptrPrev);
+    Node* ptrLeft = nullptr;
+    flatten(root, ptrLeft);
     while (root && root->ptrLeft) {
         root = root->ptrLeft;
     }
@@ -576,13 +576,13 @@ void s_sort(Node **ptrInicio){
 Node* split(Node* head) {
     Node *fast = head, *slow = head;
     // Usamos o método do coelho e da tartaruga para encontrar o meio da lista
-    while (fast->ptrNext && fast->ptrNext->ptrNext) {
-        fast = fast->ptrNext->ptrNext;
-        slow = slow->ptrNext;
+    while (fast->ptrRight && fast->ptrRight->ptrRight) {
+        fast = fast->ptrRight->ptrRight;
+        slow = slow->ptrRight;
     }
     // Dividindo a lista em duas partes
-    Node* temp = slow->ptrNext;
-    slow->ptrNext = nullptr;
+    Node* temp = slow->ptrRight;
+    slow->ptrRight = nullptr;
     return temp;
 }
 
@@ -598,14 +598,14 @@ Node* merge(Node* first, Node* second) {
 
     // Comparamos os primeiros elementos de ambas as listas e colocamos o menor deles na lista resultante
     if (first->iData < second->iData) {
-        first->ptrNext = merge(first->ptrNext, second);
-        first->ptrNext->ptrPrev = first;
-        first->ptrPrev = nullptr;
+        first->ptrRight = merge(first->ptrRight, second);
+        first->ptrRight->ptrLeft = first;
+        first->ptrLeft = nullptr;
         return first;
     } else {
-        second->ptrNext = merge(first, second->ptrNext);
-        second->ptrNext->ptrPrev = second;
-        second->ptrPrev = nullptr;
+        second->ptrRight = merge(first, second->ptrRight);
+        second->ptrRight->ptrLeft = second;
+        second->ptrLeft = nullptr;
         return second;
     }
 }
@@ -613,7 +613,7 @@ Node* merge(Node* first, Node* second) {
 // Função para classificar a lista ligada usando Merge Sort
 Node* mergeSort(Node* node) {
     // Se a lista estiver vazia ou houver apenas um elemento, não há necessidade de classificar
-    if (!node || !node->ptrNext)
+    if (!node || !node->ptrRight)
         return node;
 
     // Dividimos a lista em duas partes
@@ -640,8 +640,8 @@ void swap(int* a, int* b) {
 // Função para obter o último nó da lista
 Node *lastNode(Node *root) {
     // Percorre a lista até o fim
-    while (root && root->ptrNext)
-        root = root->ptrNext;
+    while (root && root->ptrRight)
+        root = root->ptrRight;
     return root;
 }
 
@@ -651,18 +651,18 @@ Node* partition(Node *l, Node *h) {
     int x  = h->iData;
 
     // Inicializa as posições
-    Node *i = l->ptrPrev;
+    Node *i = l->ptrLeft;
 
     // Percorre cada nó
-    for (Node *j = l; j != h; j = j->ptrNext) {
+    for (Node *j = l; j != h; j = j->ptrRight) {
         // Se o valor do nó atual for menor ou igual ao pivô, troca as posições
         if (j->iData <= x) {
-            i = (i == nullptr)? l : i->ptrNext;
+            i = (i == nullptr)? l : i->ptrRight;
             swap(&(i->iData), &(j->iData));
         }
     }
     // Troca a posição do pivô
-    i = (i == nullptr)? l : i->ptrNext;
+    i = (i == nullptr)? l : i->ptrRight;
     swap(&(i->iData), &(h->iData));
 
     // Retorna a posição do pivô
@@ -672,13 +672,13 @@ Node* partition(Node *l, Node *h) {
 // Função auxiliar para aplicar a ordenação rápida
 void _quickSort(Node* l, Node *h) {
     // Se o intervalo é válido
-    if (h != nullptr && l != h && l != h->ptrNext) {
+    if (h != nullptr && l != h && l != h->ptrRight) {
         // Particiona a listaa
         Node *p = partition(l, h);
         
         // Ordena as duas metades
-        _quickSort(l, p->ptrPrev);
-        _quickSort(p->ptrNext, h);
+        _quickSort(l, p->ptrLeft);
+        _quickSort(p->ptrRight, h);
     }
 }
 
@@ -873,15 +873,15 @@ Node* arrayToList(vector<int>& arr) {
         Node* new_node = new Node;
         new_node->iData = i;
         
-        // Configura o ponteiro 'ptrNext' do novo nó para apontar para o nó atual no início da lista
-        new_node->ptrNext = (*head_ref);
+        // Configura o ponteiro 'ptrRight' do novo nó para apontar para o nó atual no início da lista
+        new_node->ptrRight = (*head_ref);
         
-        // Como este é um novo nó, seu 'ptrPrev' apontará para nullptr
-        new_node->ptrPrev = nullptr;
+        // Como este é um novo nó, seu 'ptrLeft' apontará para nullptr
+        new_node->ptrLeft = nullptr;
 
-        // Se a lista não estiver vazia, então faz o 'ptrPrev' do antigo primeiro nó apontar para o novo nó
+        // Se a lista não estiver vazia, então faz o 'ptrLeft' do antigo primeiro nó apontar para o novo nó
         if ((*head_ref) != nullptr) 
-            (*head_ref)->ptrPrev = new_node ;
+            (*head_ref)->ptrLeft = new_node ;
 
         // Faz o novo nó ser o novo primeiro nó da lista
         (*head_ref) = new_node;
