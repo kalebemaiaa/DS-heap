@@ -88,6 +88,9 @@ Execuções corretas em verde
 
 ![image](https://github.com/kalebemaiaa/DS-heap/assets/81570326/3556bab8-9321-4662-a869-ed97f6cd98cd)
 
+Outro detalhe interessante é que o tempo de execução mostrado na tela considera todo o lapso temporal entre o começo e o fim do processo, ou seja, caso seja necessário um
+input do usuário e ele demore, o tempo de execução vai levar isso em conta.
+
 ## Autores
 
 * **Adrian Castro** - [@adrianfilipe](https://github.com/adrianfilipe)
