@@ -572,24 +572,31 @@ void s_sort(Node **ptrInicio){
 
 // Merge 
 
+// Função para dividir a lista ligada em duas partes iguais
 Node* split(Node* head) {
     Node *fast = head, *slow = head;
+    // Usamos o método do coelho e da tartaruga para encontrar o meio da lista
     while (fast->ptrNext && fast->ptrNext->ptrNext) {
         fast = fast->ptrNext->ptrNext;
         slow = slow->ptrNext;
     }
+    // Dividindo a lista em duas partes
     Node* temp = slow->ptrNext;
     slow->ptrNext = nullptr;
     return temp;
 }
 
+// Função para mesclar duas listas ligadas
 Node* merge(Node* first, Node* second) {
+    // Se a primeira lista estiver vazia, retornamos a segunda lista
     if (!first)
         return second;
 
+    // Se a segunda lista estiver vazia, retornamos a primeira lista
     if (!second)
         return first;
 
+    // Comparamos os primeiros elementos de ambas as listas e colocamos o menor deles na lista resultante
     if (first->iData < second->iData) {
         first->ptrNext = merge(first->ptrNext, second);
         first->ptrNext->ptrPrev = first;
@@ -603,167 +610,288 @@ Node* merge(Node* first, Node* second) {
     }
 }
 
+// Função para classificar a lista ligada usando Merge Sort
 Node* mergeSort(Node* node) {
+    // Se a lista estiver vazia ou houver apenas um elemento, não há necessidade de classificar
     if (!node || !node->ptrNext)
         return node;
+
+    // Dividimos a lista em duas partes
     Node* second = split(node);
 
+    // Classificamos as duas listas divididas
     node = mergeSort(node);
     second = mergeSort(second);
 
+    // Mesclamos as duas listas classificadas
     return merge(node, second);
 }
 
+
 // Quicksort 
 
+// Função para trocar dois elementos
 void swap(int* a, int* b) {
     int t = *a;
     *a = *b;
     *b = t;
 }
 
+// Função para obter o último nó da lista
 Node *lastNode(Node *root) {
+    // Percorre a lista até o fim
     while (root && root->ptrNext)
         root = root->ptrNext;
     return root;
 }
 
+// Função para encontrar a posição do pivô
 Node* partition(Node *l, Node *h) {
+    // Define o valor do pivô
     int x  = h->iData;
+
+    // Inicializa as posições
     Node *i = l->ptrPrev;
 
+    // Percorre cada nó
     for (Node *j = l; j != h; j = j->ptrNext) {
+        // Se o valor do nó atual for menor ou igual ao pivô, troca as posições
         if (j->iData <= x) {
             i = (i == nullptr)? l : i->ptrNext;
             swap(&(i->iData), &(j->iData));
         }
     }
+    // Troca a posição do pivô
     i = (i == nullptr)? l : i->ptrNext;
     swap(&(i->iData), &(h->iData));
+
+    // Retorna a posição do pivô
     return i;
 }
 
+// Função auxiliar para aplicar a ordenação rápida
 void _quickSort(Node* l, Node *h) {
+    // Se o intervalo é válido
     if (h != nullptr && l != h && l != h->ptrNext) {
+        // Particiona a lista
         Node *p = partition(l, h);
+        
+        // Ordena as duas metades
         _quickSort(l, p->ptrPrev);
         _quickSort(p->ptrNext, h);
     }
 }
 
+// Função principal para aplicar a ordenação rápida na lista ligada
 void quickSort(Node *head) {
+    // Encontra o último nó
     Node *h = lastNode(head);
+    
+    // Chama a função auxiliar para ordenar a lista
     _quickSort(head, h);
 }
 
 
 // Radixsort 
 
+// Função de contagem utilizada no Radix Sort
 void countSort(vector<int>& arr, int exp) {
     int n = arr.size();
-    vector<int> output(n);
-    vector<int> count(10, 0);
     
+    // Cria vetores de saída e contagem
+    vector<int> output(n);  
+    vector<int> count(10, 0);  // Temos 10 dígitos, de 0 a 9
+    
+    // Conta o número de ocorrências de cada dígito na posição indicada por exp
     for (int i = 0; i < n; i++)
         count[(arr[i] / exp) % 10]++;
     
+    // Acumula as contagens para que count[i] indique a posição do dígito i no vetor de saída
     for (int i = 1; i < 10; i++)
         count[i] += count[i - 1];
     
+    // Constrói o vetor de saída
     for (int i = n - 1; i >= 0; i--) {
         output[count[(arr[i] / exp) % 10] - 1] = arr[i];
         count[(arr[i] / exp) % 10]--;
     }
     
+    // Copia o vetor de saída para o vetor original, de modo que os números originais estejam agora ordenados de acordo com o dígito atual
     for (int i = 0; i < n; i++)
         arr[i] = output[i];
 }
 
+// Função principal para realizar o Radix Sort
 void radixSort(vector<int>& arr) {
+    // Encontra o número máximo para saber o número de dígitos que ele possui
     int max = *max_element(arr.begin(), arr.end());
     
+    // Realiza o Count Sort para cada dígito. Note que, em vez de passar o número de dígitos, exp é passado. exp é 10^i, onde i é o dígito atual
     for (int exp = 1; max / exp > 0; exp *= 10)
         countSort(arr, exp);
 }
 
+
 // Heapsort 
 
+// Função para ajustar um heap
 void heapify(vector<int>& arr, int n, int i) {
+    // Assume-se inicialmente que o maior elemento é a raiz (i)
     int largest = i; 
-    int left = 2 * i + 1;
+    
+    // Calcula os índices dos filhos esquerdo e direito
+    int left = 2 * i + 1; 
     int right = 2 * i + 2;
   
+    // Verifica se o filho esquerdo existe e é maior que a raiz
     if (left < n && arr[left] > arr[largest])
         largest = left;
   
+    // Verifica se o filho direito existe e é maior que a maior elemento encontrado até agora
     if (right < n && arr[right] > arr[largest])
         largest = right;
   
+    // Se o maior elemento não é mais a raiz
     if (largest != i) {
+        // Troca a raiz com o maior elemento
         swap(arr[i], arr[largest]);
+        
+        // Chama recursivamente heapify para o novo sub-heap
         heapify(arr, n, largest);
     }
 }
 
+// Função para realizar um heap sort em um vetor
 void heapSort(vector<int>& arr) {
+    // Obtem o tamanho do vetor
     int n = arr.size();
   
+    // Constrói um heap máximo a partir do vetor
     for (int i = n / 2 - 1; i >= 0; i--)
         heapify(arr, n, i);
   
+    // Um por um extrai o elemento do heap
     for (int i = n - 1; i > 0; i--) {
+        // Move o elemento raiz atual para o final
         swap(arr[0], arr[i]);
+        
+        // Chama heapify na nova raiz do heap reduzido
         heapify(arr, i, 0);
     }
 }
 
 // Coutingsort 
 
+// Função para ordenar um vetor utilizando o algoritmo de ordenação Count Sort
 void countSort(vector<int>& arr) {
+    
+    // Encontra o valor máximo e mínimo no vetor original
     int max = *max_element(arr.begin(), arr.end());
     int min = *min_element(arr.begin(), arr.end());
+
+    // Calcula o intervalo dos valores (max - min + 1)
     int range = max - min + 1;
   
+    // Cria um vetor "count" para contar a ocorrência dos elementos e um vetor "output" para o vetor ordenado
     vector<int> count(range), output(arr.size());
+
+    // Conta a ocorrência de cada elemento no vetor original
     for(int i = 0; i < arr.size(); i++)
         count[arr[i]-min]++;
     
+    // Altera o vetor "count" para que cada elemento em uma posição i seja a soma de todos os elementos em posições menores ou iguais a i
     for(int i = 1; i < count.size(); i++)
         count[i] += count[i-1];
     
+    // Constrói o vetor "output" com os elementos ordenados
     for(int i = arr.size()-1; i >= 0; i--) {
-        output[count[arr[i]-min]-1] = arr[i];
+        output[count[arr[i]-min]-1] = arr[i]; // O "-1" é necessário porque os índices de array começam em 0
         count[arr[i]-min]--;
     }
     
+    // Copia o vetor "output" ordenado de volta para o vetor original
     for(int i = 0; i < arr.size(); i++)
         arr[i] = output[i];
 }
 
+
 // BucketSort
 
+// Função para ordenar um vetor utilizando o algoritmo de ordenação bucket sort
 void bucketSort(vector<float>& arr) {
+    
+    // Obtem o tamanho do vetor
     int n = arr.size();
+
+    // Cria um vetor de listas para armazenar os buckets
     vector<list<float>> buckets(n);
 
+    // Distribui os elementos do vetor original pelos buckets
     for (int i = 0; i < n; i++) {
+        // O índice do bucket é calculado como n vezes o valor do elemento. 
+        // Isso é válido porque estamos assumindo que os elementos estão uniformemente distribuídos no intervalo [0, 1)
         int bucketIndex = n * arr[i];
+
+        // Adiciona o elemento atual ao seu respectivo bucket
         buckets[bucketIndex].push_back(arr[i]);
     }
 
+    // Ordena individualmente cada bucket
     for (int i = 0; i < n; i++) 
         buckets[i].sort();
     
+    // Índice para iterar sobre o vetor original
     int index = 0;
+    
+    // Concatena os buckets no vetor original, efetivamente o ordenando
     for (int i = 0; i < n; i++) {
+        // Remove os elementos do bucket e coloca-os de volta no vetor original
         while (!buckets[i].empty()) {
+            // Coloca o primeiro elemento do bucket no vetor
             arr[index++] = *(buckets[i].begin());
+            
+            // Remove o primeiro elemento do bucket
             buckets[i].erase(buckets[i].begin());
         }
     }
 }
 
 
+// Função para converter um vetor em uma lista duplamente ligada
+Node* arrayToList(vector<int>& arr) {
+    
+    // Inicializa um ponteiro de nó como nullptr
+    Node* node = nullptr;
+    
+    // Ponteiro para ponteiro para o começo da lista ligada
+    Node** head_ref = &node;
+    
+    // Loop sobre o vetor
+    for (int i : arr) {
+        
+        // Cria um novo nó e atribui o valor do elemento atual do vetor
+        Node* new_node = new Node;
+        new_node->iData = i;
+        
+        // Configura o ponteiro 'ptrNext' do novo nó para apontar para o nó atual no início da lista
+        new_node->ptrNext = (*head_ref);
+        
+        // Como este é um novo nó, seu 'ptrPrev' apontará para nullptr
+        new_node->ptrPrev = nullptr;
+
+        // Se a lista não estiver vazia, então faz o 'ptrPrev' do antigo primeiro nó apontar para o novo nó
+        if ((*head_ref) != nullptr) 
+            (*head_ref)->ptrPrev = new_node ;
+
+        // Faz o novo nó ser o novo primeiro nó da lista
+        (*head_ref) = new_node;
+    }
+    
+    // Retorna o ponteiro para o início da lista ligada
+    return node;
+}
+// Por isso na main tem q estar 'vector<int> arr = {170, 45, 75, 90, 802, 24, 2, 66};' ( um exemplo ) 
+// Mas apenas na Radix, Heap. Couting, Bucket 
 
 // FUNÇÕES PARA REMOVER NO DE ACORDO COM O VALOR INTEIRO SOLICITADO
 Node* remove(Node *ptrAtual){
