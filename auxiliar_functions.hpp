@@ -3,6 +3,7 @@
 #include <cmath>
 #include <chrono>
 #include <vector>
+#include "animation.hpp"
 
 #define NULLVAL -666
 
@@ -142,6 +143,28 @@ static void printGalho(int iTotalTabs) {
     for(int i = iTotalTabs - 1; i > 0; i--)
         cout << "\t";
     cout << "+" << "---  ";
+}
+
+
+int tamanho(Node *ptrInicio){
+    int iCont = 0;
+    while(ptrInicio != nullptr){
+        ptrInicio = ptrInicio->ptrRight;
+        iCont ++;
+    }
+    return iCont;
+};
+
+int *convertArray(Node *ptrHead){
+    int itamanho = tamanho(ptrHead);
+    int *iLista = (int *) malloc(sizeof(int) * itamanho);
+    int i = 0;
+    while(i < itamanho){
+        iLista[i] = ptrHead->iData;
+        ptrHead = ptrHead->ptrRight;
+    }
+
+    return iLista;
 }
 
 /**
@@ -475,15 +498,6 @@ Node* ii_sort(Node *ptrRoot){
     i_sort(&ptrHead);
     return ptrHead;
 }
-
-int tamanho(Node *ptrInicio){
-    int iCont = 0;
-    while(ptrInicio != nullptr){
-        ptrInicio = ptrInicio->ptrRight;
-        iCont ++;
-    }
-    return iCont;
-};
 
 void shell_sort(Node **ptrInicio){
     Node *ptrAux = *ptrInicio, *ptrDivide_lista;
@@ -1449,24 +1463,32 @@ int drawMenuOrdenacao() {
                 iGetInput = get_int();
                 if(iGetInput == 1) {
                     auto start = chrono::steady_clock::now();
-                    s_sort(&(ptrAllLinkedList[iChooseList - 1]));
+                    int *v = convertArray(ptrAllLinkedList[iChooseList - 1]);
+                    selectionSortAnimation(v, tamanho(ptrAllLinkedList[iChooseList - 1]));
+                    s_sort(&(ptrAllLinkedList[iChooseList - 1]));                    
                     printLinkedList(ptrAllLinkedList[iChooseList - 1]);
                     getTimeLapse(start);
                 }
                 else if(iGetInput == 2) {
                     auto start = chrono::steady_clock::now();
+                    int *v = convertArray(ptrAllLinkedList[iChooseList - 1]);
+                    bubbleSortAnimation(v, tamanho(ptrAllLinkedList[iChooseList - 1]));
                     ptrAllLinkedList[iChooseList - 1] = b_sort(&(ptrAllLinkedList[iChooseList - 1]));
                     printLinkedList(ptrAllLinkedList[iChooseList - 1]);
                     getTimeLapse(start);
                 }
                 else if(iGetInput == 3) {
                     auto start = chrono::steady_clock::now();
+                    int *v = convertArray(ptrAllLinkedList[iChooseList - 1]);
+                    selectionSortAnimation(v, tamanho(ptrAllLinkedList[iChooseList - 1]));
                     i_sort(&(ptrAllLinkedList[iChooseList - 1]));
                     printLinkedList(ptrAllLinkedList[iChooseList - 1]);
                     getTimeLapse(start);
                 }
                 else if(iGetInput == 4) {
                     auto start = chrono::steady_clock::now();
+                    int *v = convertArray(ptrAllLinkedList[iChooseList - 1]);
+                    shellSortAnimation(v, tamanho(ptrAllLinkedList[iChooseList - 1]));
                     shell_sort(&(ptrAllLinkedList[iChooseList - 1]));
                     printLinkedList(ptrAllLinkedList[iChooseList - 1]);
                     getTimeLapse(start);
@@ -1474,6 +1496,7 @@ int drawMenuOrdenacao() {
                 else if(iGetInput == 5) {
                     auto start = chrono::steady_clock::now();
                     ptrAllLinkedList[iChooseList - 1] = mergeSort(ptrAllLinkedList[iChooseList - 1]);
+
                     printLinkedList(ptrAllLinkedList[iChooseList - 1]);
                     getTimeLapse(start);
                 }

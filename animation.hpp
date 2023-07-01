@@ -78,7 +78,6 @@ void insertionSortAnimation(int arr[], int size)
 }
 
 // Select
-
 void selectionSortAnimation(int arr[], int size)
 {
     for (int i = 0; i < size - 1; i++) {
@@ -108,7 +107,6 @@ void selectionSortAnimation(int arr[], int size)
 }
 
 // Shell 
-
 void shellSortAnimation(int arr[], int size)
 {
     for (int gap = size / 2; gap > 0; gap /= 2) {
@@ -136,61 +134,4 @@ void shellSortAnimation(int arr[], int size)
             arr[j] = temp;
         }
     }
-}
-
-int main()
-{
-
-    int arr[] = {5, 9, 3, 1, 7};
-    int size = sizeof(arr) / sizeof(arr[0]);
-
-    // Bubble 
-    bubbleSortAnimation(arr, size);
-
-    // Mostra o array final após a ordenação
-    for (int i = 0; i < size; i++) {
-        cout << arr[i] << " ";
-    }
-    cout << endl;
-
-    cout << "======================="<< endl;
-    cout << endl;
-
-    // Insert 
-
-    insertionSortAnimation(arr, size);
-
-    // Mostra o array final após a ordenação
-    for (int i = 0; i < size; i++) {
-        cout << arr[i] << " ";
-    }
-    cout << endl;
-
-    cout << "======================="<< endl;
-    cout << endl;
-
-    // Select 
-
-    selectionSortAnimation(arr, size);
-
-    // Mostra o array final após a ordenação
-    for (int i = 0; i < size; i++) {
-        cout << arr[i] << " ";
-    }
-    cout << endl;
-
-    cout << "======================="<< endl;
-    cout << endl;
-
-    // Shell 
-
-    shellSortAnimation(arr, size);
-
-    // Mostra o array final após a ordenação
-    for (int i = 0; i < size; i++) {
-        cout << arr[i] << " ";
-    }
-    cout << endl;
-
-    return 0;
 }
