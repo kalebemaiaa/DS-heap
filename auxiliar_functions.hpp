@@ -673,7 +673,7 @@ Node* partition(Node *l, Node *h) {
 void _quickSort(Node* l, Node *h) {
     // Se o intervalo é válido
     if (h != nullptr && l != h && l != h->ptrNext) {
-        // Particiona a lista
+        // Particiona a listaa
         Node *p = partition(l, h);
         
         // Ordena as duas metades
